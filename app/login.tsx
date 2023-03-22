@@ -1,9 +1,15 @@
 'use client'
 
 import {Card, TextInput, Title, Button} from "@tremor/react";
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-function loginEvent() {
+function loginEvent(hos_id: string) {
     console.log('button clicked')
+
+    return(
+        redirect(`./${hos_id}`)
+    )
 }
 
 export default function LoginPage({ disabled }: { disabled?: boolean }) {
@@ -13,7 +19,7 @@ export default function LoginPage({ disabled }: { disabled?: boolean }) {
                 <Card className="">
                     <Title>Login</Title>
                     <TextInput placeholder="Username" error={true} errorMessage="Invalid Input"/>
-                    <Button size="xl" onClick={() => loginEvent()}>
+                    <Button size="xl" onClick={() => loginEvent('hospital1')}>
                         Login
                     </Button>
                     <input
@@ -23,6 +29,11 @@ export default function LoginPage({ disabled }: { disabled?: boolean }) {
                         disabled={disabled}
 
                     />
+                    <Link href={"./hospital1"}>
+                        <Card>
+                            <Title>Manual Link</Title>
+                        </Card>
+                    </Link>
                 </Card>
             </div>
         </main>

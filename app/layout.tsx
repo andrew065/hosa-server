@@ -15,7 +15,6 @@ export default async function RootLayout({children
         <html lang="en" className="h-full bg-gray-50">
             <body className="h-full">
                 {children}
-                <LoginPage />
             </body>
         </html>
     );
