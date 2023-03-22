@@ -2,7 +2,8 @@
 
 import {Card, TextInput, Title, Button} from "@tremor/react";
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { useRouter, redirect } from 'next/navigation'
+import { useEffect } from 'react'
 
 function loginEvent(hos_id: string) {
     console.log('button clicked')
@@ -10,6 +11,14 @@ function loginEvent(hos_id: string) {
     return(
         redirect(`./${hos_id}`)
     )
+}
+
+const page = (hos_id: string) => {
+    const { push } = useRouter()
+    useEffect(() => {
+        push(`./${hos_id}`)
+    }, [])
+    return <p></p>
 }
 
 export default function LoginPage({ disabled }: { disabled?: boolean }) {
