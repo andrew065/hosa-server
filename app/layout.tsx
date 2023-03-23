@@ -2,9 +2,9 @@ import './globals.css';
 import LoginPage from "@/app/login";
 
 export const metadata = {
-    title: 'Next.js 13 + PlanetScale + NextAuth + Tailwind CSS',
+    title: 'wECG Login',
     description:
-        'A user admin dashboard configured with Next.js, PlanetScale, NextAuth, Tailwind CSS, TypeScript, ESLint, and Prettier.'
+        'Hospital Dashboard'
 };
 
 export default async function RootLayout({children
