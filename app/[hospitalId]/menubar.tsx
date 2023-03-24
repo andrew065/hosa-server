@@ -1,15 +1,21 @@
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { Button } from '@tremor/react'
+'use client'
 
-export default function MenuBar() {
+import { useRouter } from 'next/navigation'
+import { Button, Flex, Metric } from '@tremor/react'
+
+export default function MenuBar(header: any) {
     const router = useRouter()
     return(
         <main>
             <div>
-                <li>
-                    <Link href="\">Back</Link>
-                </li>
+                <Flex>
+                    <div>
+                        <Metric>{header.header}</Metric>
+                    </div>
+                    <div>
+                        <Button onClick={() => router.back()}>Back</Button>
+                    </div>
+                </Flex>
             </div>
         </main>
     )

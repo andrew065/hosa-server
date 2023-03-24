@@ -1,9 +1,6 @@
-'use client'
-
-import {Grid, Title, Card, Flex, Metric, Text, Button} from "@tremor/react";
+import {Grid, Title, Card, Flex, Metric, Text } from "@tremor/react";
 import MenuBar from "@/app/[hospitalId]/menubar";
 import Link from "next/link";
-import { useRouter } from 'next/router'
 
 const ambulance_data = [
     {
@@ -26,15 +23,11 @@ const ambulance_data = [
 
 
 export default function HospitalPage({ params }: any) {
-    const router = useRouter()
     let hospital = params.hospitalId
     return (
         <main className="p-4 md:p-10 mx-auto max-w-7xl">
             <div>
-                {/*<MenuBar />*/}
-                <Button onClick={() => router.back()}>
-                    Back
-                </Button>
+                <MenuBar header={hospital}/>
             </div>
             <div>
                 <Grid className="gap-6" numColsSm={2} numColsLg={3}>
