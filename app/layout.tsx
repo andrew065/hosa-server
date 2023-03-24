@@ -12,7 +12,7 @@ export default async function RootLayout({children
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className="h-full bg-gray-50">
+        <html lang="en">
             <body className="h-full">
                 {children}
             </body>

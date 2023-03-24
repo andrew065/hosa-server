@@ -14,8 +14,8 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="p-5 md:p-40 mx-auto  align-content: center">
-            <div className="container mx auto align-content: center">
+        <main className="p-10 md:p-40 mx-auto  align-content: center ">
+            <div className="container mx auto align-content: center px-20">
                 <Card className="">
                     <Title>Login</Title>
                     <TextInput
