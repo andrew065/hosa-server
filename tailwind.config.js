@@ -12,7 +12,10 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: '20rem'
+      padding: '5rem',
+    },
+    colours: {
+      'white': '#f8fafc'
     }
   },
   plugins: [],

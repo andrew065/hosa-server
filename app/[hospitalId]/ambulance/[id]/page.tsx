@@ -25,11 +25,12 @@ export default function HospitalPage({ params }: any) {
     let ambulance = params.id
 
     return (
-        <main className="p-4 md:p-10 mx-auto max-w-7xl">
+
+        <main >
             <div>
                 <MenuBar header={ambulance}/>
             </div>
-            <div>
+            <div className="p-4 md:p-10 mx-auto max-w-7xl">
                 <Card>
                     <Title>ECG Graph</Title>
                     <AreaChart

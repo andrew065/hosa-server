@@ -14,10 +14,10 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="p-10 md:p-40 mx-auto  align-content: center ">
-            <div className="container mx auto align-content: center px-20">
-                <Card className="">
-                    <Title>Login</Title>
+        <main className="container mx-auto">
+            <div className="">
+                <Card className="space-y-2 p-10">
+                    <Title className="pb-2">Login</Title>
                     <TextInput
                         placeholder="Username"
                         value={username}
@@ -29,9 +29,11 @@ export default function LoginPage() {
                         value={password}
                         onChange={e => setPass(e.currentTarget.value)}
                     />
-                    <Button size="xl" onClick={() => handleClick()}>
-                        Login
-                    </Button>
+                    <div className="pt-3">
+                        <Button size="sm" onClick={() => handleClick()}>
+                            Login
+                        </Button>
+                    </div>
                 </Card>
             </div>
         </main>

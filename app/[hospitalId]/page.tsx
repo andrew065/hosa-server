@@ -1,4 +1,4 @@
-import {Grid, Title, Card, Flex, Metric, Text } from "@tremor/react";
+import {Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/[hospitalId]/menubar";
 import Link from "next/link";
 
@@ -25,11 +25,11 @@ const ambulance_data = [
 export default function HospitalPage({ params }: any) {
     let hospital = params.hospitalId
     return (
-        <main className="p-4 md:p-10 mx-auto max-w-7xl">
+        <main >
             <div>
                 <MenuBar header={hospital}/>
             </div>
-            <div>
+            <div className="p-4 md:p-10 mx-auto max-w-7xl">
                 <Grid className="gap-6" numColsSm={2} numColsLg={3}>
                     {ambulance_data.map((item) => (
                         <Link href={`./${hospital}/ambulance/${item.id}`}>

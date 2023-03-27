@@ -1,5 +1,4 @@
 import './globals.css';
-import LoginPage from "@/app/login";
 
 export const metadata = {
     title: 'wECG Login',
@@ -12,7 +11,7 @@ export default async function RootLayout({children
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
+        <html lang="en" className="bg-gray-50">
             <body className="h-full">
                 {children}
             </body>
