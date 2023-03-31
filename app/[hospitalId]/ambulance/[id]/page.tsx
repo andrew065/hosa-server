@@ -1,7 +1,7 @@
 'use client'
 
 import {Card, AreaChart, Title} from "@tremor/react";
-import MenuBar from "@/app/[hospitalId]/menubar";
+import MenuBar from "@/app/menubar";
 
 const performance = [
     {

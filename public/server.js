@@ -14,25 +14,29 @@ const item = [
     }
 ]
 
-class HospitalServer {
-    async constructor(databaseId, containerId) {
+class ServerClient {
+    constructor(databaseId, containerId) {
         this.databaseId = databaseId
         this.containerId = containerId
 
         this.client = new CosmosClient({endpoint: endpoint, key: primaryKey})
+    }
 
+    async init() {
         const db = await this.client.databases.createIfNotExists({id: this.databaseId})
         this.database = db.database
 
-        const cont = await this.database.containers.createIfNotExists({id: this.containerId})
-        this.container = cont.container
+        this.cont = await this.database.containers.createIfNotExists({id: this.containerId})
+        this.container = this.cont.container.items
+
+        // console.log(await this.container.query("SELECT * from c").fetchAll())
     }
 
     async fetch_all_resources() {
-        const { resources } = await this.container.items
-            .query("SELECT * from c") //fetches all items from entire container
-            .fetchAll()
-
+        console.log(this.database)
+        const {container} = await this.database.containers.createIfNotExists({id: this.containerId})
+        const { resources } = await container.items.query("SELECT * from c").fetchAll()
+        console.log(resources)
         return resources
     }
 
@@ -41,3 +45,4 @@ class HospitalServer {
     }
 }
 
+module.exports = ServerClient
