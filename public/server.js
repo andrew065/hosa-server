@@ -14,47 +14,30 @@ const item = [
     }
 ]
 
-const cosmosClient = new CosmosClient({endpoint: endpoint, key: primaryKey})
-let { database } = null
-let { container } = null
+class HospitalServer {
+    async constructor(databaseId, containerId) {
+        this.databaseId = databaseId
+        this.containerId = containerId
 
-add_item().catch(err => console.error(err))
+        this.client = new CosmosClient({endpoint: endpoint, key: primaryKey})
 
-async function add_item() {
-    database = await cosmosClient.databases.createIfNotExists({id: databaseId})
-    container = await database.containers.createIfNotExists({
-        id: containers[0],
-        partitionKey: {
-            paths: partitionKeyPath
-        }
-    });
-    const { resource } = await container.items.create(item);
+        const db = await this.client.databases.createIfNotExists({id: this.databaseId})
+        this.database = db.database
+
+        const cont = await this.database.containers.createIfNotExists({id: this.containerId})
+        this.container = cont.container
+    }
+
+    async fetch_all_resources() {
+        const { resources } = await this.container.items
+            .query("SELECT * from c") //fetches all items from entire container
+            .fetchAll()
+
+        return resources
+    }
+
+    async add_item(item) {
+        const { resources } = await this.container.push(item)
+    }
 }
 
-async function fetch_ambulances() {
-    const { resources } = await container.items
-        .query("SELECT * from c") //fetches all items from entire container
-        .fetchAll()
-
-    return resources
-}
-
-// SQL Query specification
-// const querySpec = {
-//     // SQL query text using LIKE keyword and parameter
-//     query: `select * from products p where p.name LIKE @propertyValue`,
-//     // Optional SQL parameters, to be used in query
-//     parameters: [
-//         {
-//             // name of property to find in query text
-//             name: "@propertyValue",
-//             // value to insert in place of property
-//             value: `%Blue%`,
-//         }
-//     ]
-// };
-// Execute query
-//const { resources } = await container.items.query(querySpec).fetchAll();
-
-//inserting items
-// const result = await container.items.upsert(item);
