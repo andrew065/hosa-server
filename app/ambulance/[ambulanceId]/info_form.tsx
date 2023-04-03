@@ -15,11 +15,8 @@ export default function InfoForm() {
 
     const createItem = async() => {
         const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
-        const { database} = await client.databases.createIfNotExists({id: databaseId})
-        const { container } = await database.containers.createIfNotExists({id: containerId})
-        await container.items.create({id: 'ambulance5', status: status, unit: unit})
-        console.log(container)
-
+        const items = client.database(databaseId).container(containerId).items
+        return await items.create<object>({id: 'ambulance6', status: status, unit: unit})
     }
 
     return(

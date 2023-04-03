@@ -3,15 +3,29 @@
 import {Card, TextInput, Title, Button} from "@tremor/react";
 import { useRouter, } from 'next/navigation'
 import { useState, } from 'react'
-import Link from "next/link";
-
+import verify from './login-authentication'
 
 export default function LoginPage() {
     const [username, setUser] = useState('')
     const [password, setPass] = useState('')
+    const [userError, setUserError] = useState(true)
     const router = useRouter()
     const handleClick = () => {
-        router.push(`./${username}`) // TODO: add authentication
+        const valid = verify(username, password)
+
+        if (valid === 'hospital') {
+            setUserError(true)
+            router.push(`./${username}`) // TODO: add authentication
+        }
+        else if (valid === 'ambulance') {
+            setUserError(true)
+            router.push(`./ambulance/${username}`)
+        }
+        else {
+            setUserError(false)
+        }
+
+
     }
 
     return (
@@ -23,12 +37,13 @@ export default function LoginPage() {
                         placeholder="Username"
                         value={username}
                         onChange={e => setUser(e.currentTarget.value)}
-                        error={false}
                     />
                     <TextInput
                         placeholder="Password"
                         value={password}
                         onChange={e => setPass(e.currentTarget.value)}
+                        error={false}
+                        errorMessage="Invalid username and password"
                     />
                     <div className="pt-3">
                         <Button size="sm" onClick={() => handleClick()}>
