@@ -3,6 +3,7 @@
 import {Card, TextInput, Title, Button} from "@tremor/react";
 import { useRouter, } from 'next/navigation'
 import { useState, } from 'react'
+import Link from "next/link";
 
 
 export default function LoginPage() {
@@ -33,6 +34,7 @@ export default function LoginPage() {
                         <Button size="sm" onClick={() => handleClick()}>
                             Login
                         </Button>
+                        <Button size="sm" onClick={() => router.push("./ambulance/ambu1")}>Ambulance Page</Button>
                     </div>
                 </Card>
             </div>
