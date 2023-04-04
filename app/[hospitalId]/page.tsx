@@ -2,26 +2,14 @@ import { Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import Link from "next/link";
 import { CosmosClient } from '@azure/cosmos'
-import { useRouter } from "next/navigation";
+import Script from "next/script";
 
-export const dynamic = 'force-dynamic',
-    dynamicParams = true,
-    revalidate = 0,
-    fetchCache = 'force-no-store'
+export const revalidate = 0;
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
-
-async function get_container_items(client: any) {
-    const containerItems = client.database(databaseId).container(containerId).items
-    const container_items = await containerItems.query("SELECT * from c").fetchAll()
-
-
-    const items = container_items["resources"]
-    return items as any[]
-}
 
 function AmbulanceItem({item}: any, hospital: string) {
     const {id, status, unit} = item || {}
@@ -37,27 +25,32 @@ function AmbulanceItem({item}: any, hospital: string) {
     )
 }
 
+export async function getItems(client: CosmosClient) {
+    const containerItems = client.database(databaseId).container(containerId).items
+    const container_items = await containerItems.query("SELECT * from c").fetchAll()
+    return container_items["resources"]
+}
+
 export default async function HospitalPage({ params }: any) {
     const hospital = params.hospitalId
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
-    const containerItems = client.database(databaseId).container(containerId).items
-    const container_items = await containerItems.query("SELECT * from c").fetchAll()
-    const items = container_items["resources"]
+    const items = await getItems(client)
+
     const date = new Date(Date.UTC(0, 0, 0, 0, 0, 0, 0))
 
-    const i = await fetch('https://hosa-storage-database.documents.azure.com/dbs/hosa-database/containers/AmbulanceData', {
+    const i = await fetch('https://hosa-storage-database.documents.azure.com/dbs/hosa-database/colls/AmbulanceData', {
         method: 'POST',
         headers: {
             'Authorization': primaryKey,
             'Content-Type': 'application/query+json',
             'x-ms-date': date.toUTCString(),
-            'x-ms-documentdb-isquery': 'True'
+            'x-ms-documentdb-isquery': 'True',
         },
         body: JSON.stringify({
-            'query': 'select * from c',
+            'query': 'SELECT * from AmbulanceData',
             'parameters': []
         }),
-        next: { revalidate: 1 }
+        next: { revalidate: 0 }
     })
 
     console.log(i)
@@ -73,6 +66,9 @@ export default async function HospitalPage({ params }: any) {
                         return <AmbulanceItem item={item} hospital={hospital}></AmbulanceItem>
                     })}
                 </Grid>
+                <Script>
+
+                </Script>
             </div>
         </main>
     )

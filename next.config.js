@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
     serverComponentsExternalPackages: ['@tremor/react'],
+    isrMemoryCacheSize: 50,
   },
 }
 
