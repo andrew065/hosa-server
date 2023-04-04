@@ -25,7 +25,7 @@ function AmbulanceItem({item}: any, hospital: string) {
     )
 }
 
-export async function getItems(client: CosmosClient) {
+async function getItems(client: CosmosClient) {
     const containerItems = client.database(databaseId).container(containerId).items
     const container_items = await containerItems.query("SELECT * from c").fetchAll()
     return container_items["resources"]
