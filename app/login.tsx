@@ -8,24 +8,35 @@ import verify from './login-authentication'
 export default function LoginPage() {
     const [username, setUser] = useState('')
     const [password, setPass] = useState('')
-    const [userError, setUserError] = useState(true)
+    const [errorMsg, setErrorMsg] = useState('')
+    const [userError, setUserError] = useState(false)
+    const [passError, setPassError] = useState(false)
     const router = useRouter()
     const handleClick = () => {
         const valid = verify(username, password)
 
         if (valid === 'hospital') {
-            setUserError(true)
+            setUserError(false)
+            setErrorMsg('')
             router.push(`./${username}`) // TODO: add authentication
         }
         else if (valid === 'ambulance') {
-            setUserError(true)
+            setUserError(false)
+            setErrorMsg('')
             router.push(`./ambulance/${username}`)
         }
-        else {
-            setUserError(false)
+        else if (valid === 'hospital-pass' || valid === 'ambulance-pass') {
+            setErrorMsg('Invalid password')
+            setPass('')
+            setPassError(true)
         }
-
-
+        else {
+            setErrorMsg('Invalid username & password')
+            setUserError(true)
+            setPassError(true)
+            setUser('')
+            setPass('')
+        }
     }
 
     return (
@@ -36,20 +47,27 @@ export default function LoginPage() {
                     <TextInput
                         placeholder="Username"
                         value={username}
-                        onChange={e => setUser(e.currentTarget.value)}
-                    />
+                        error={userError}
+                        onChange={e => {
+                            setUser(e.currentTarget.value)
+                            setErrorMsg('')
+                            setUserError(false)
+                        }}/>
                     <TextInput
                         placeholder="Password"
                         value={password}
-                        onChange={e => setPass(e.currentTarget.value)}
-                        error={false}
-                        errorMessage="Invalid username and password"
+                        error={passError}
+                        errorMessage={errorMsg}
+                        onChange={e => {
+                            setPass(e.currentTarget.value)
+                            setErrorMsg('')
+                            setPassError(false)
+                        }}
                     />
                     <div className="pt-3">
                         <Button size="sm" onClick={() => handleClick()}>
                             Login
                         </Button>
-                        <Button size="sm" onClick={() => router.push("./ambulance/ambu1")}>Ambulance Page</Button>
                     </div>
                 </Card>
             </div>

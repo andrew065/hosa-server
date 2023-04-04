@@ -15,11 +15,13 @@ const verify = function (user, pass) {
         if (hospital[user] === pass) {
             return 'hospital'
         }
+        return 'hospital-pass'
     }
     else if (user in ambulance) {
         if (ambulance[user] === pass) {
             return 'ambulance'
         }
+        return 'ambulance-pass'
     }
     return 'false'
 }

@@ -9,14 +9,16 @@ const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3C
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
-export default function InfoForm() {
-    const [status, setStatus] = useState('Patient Status')
-    const [unit, setUnit] = useState('Anticipated Unit')
+export default function InfoForm(ambulanceId: any) {
+    const [status, setStatus] = useState('')
+    const [unit, setUnit] = useState('')
+    const [statusPlaceholder, setStatusPlaceholder] = useState('Status')
+    const [unitPlaceholder, setUnitPlaceholder] = useState('Anticipated Unit')
 
     const createItem = async() => {
         const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
         const items = client.database(databaseId).container(containerId).items
-        return await items.create<object>({id: 'ambulance6', status: status, unit: unit})
+        return await items.create<object>({id: ambulanceId, status: status, unit: unit})
     }
 
     return(
@@ -24,12 +26,12 @@ export default function InfoForm() {
             <Card className="space-y-2 p-10">
                 <Title className="pb-2">Patient Data</Title>
                 <TextInput // TODO: add error/invalid input
-                    placeholder={status}
+                    placeholder={statusPlaceholder}
                     value={status}
                     onChange={e => setStatus(e.target.value)}
                 />
                 <TextInput // TODO: add error/invalid input
-                    placeholder={unit}
+                    placeholder={unitPlaceholder}
                     value={unit}
                     onChange={e => setUnit(e.target.value)}
                 />
