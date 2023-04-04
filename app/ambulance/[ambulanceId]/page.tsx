@@ -1,5 +1,5 @@
-import MenuBar from "@/app/menubar";
 import InfoForm from "@/app/ambulance/[ambulanceId]/info-form"
+import Logout from "@/app/ambulance/[ambulanceId]/logout";
 import { Text } from "@tremor/react";
 import { Suspense } from "react"
 
@@ -9,7 +9,7 @@ export default async function AmbulanceClient({params}: any) {
     return (
         <main>
             <div>
-                <MenuBar header={ambulanceId}></MenuBar>
+                <Logout ambulanceId={ambulanceId} />
             </div>
             <div className="p-4 md:p-10 mx-auto max-w-7xl">
                 <Suspense fallback={<Text className="text-center">Form loading...</Text>}>
