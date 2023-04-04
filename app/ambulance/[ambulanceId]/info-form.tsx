@@ -10,6 +10,8 @@ const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
 export default function InfoForm(ambulanceId: any) {
+    const id = String(ambulanceId.ambulanceId)
+
     const [status, setStatus] = useState('')
     const [unit, setUnit] = useState('')
     const [statusPlaceholder, setStatusPlaceholder] = useState('Status')
@@ -18,7 +20,8 @@ export default function InfoForm(ambulanceId: any) {
     const createItem = async() => {
         const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
         const items = client.database(databaseId).container(containerId).items
-        return await items.create<object>({id: ambulanceId, status: status, unit: unit})
+        return await items.create<object>({id: id, status: status, unit: unit})
+            .catch(r => console.error(r))
     }
 
     return(
@@ -37,7 +40,6 @@ export default function InfoForm(ambulanceId: any) {
                 />
                 <div className="pt-3">
                     <Button size="sm" onClick={() => {
-                        console.log(status, unit)
                         createItem().then(r => console.log(r))
                     }}>
                         Set Variables

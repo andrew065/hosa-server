@@ -2,21 +2,23 @@ import { Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import Link from "next/link";
 import { CosmosClient } from '@azure/cosmos'
+import { useRouter } from "next/navigation";
 
-export const dynamic = 'auto',
+export const dynamic = 'force-dynamic',
     dynamicParams = true,
     revalidate = 0,
-    fetchCache = 'auto',
-    runtime = 'nodejs',
-    preferredRegion = 'auto'
+    fetchCache = 'force-no-store'
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
-async function get_container_items(containerItems: any) {
+async function get_container_items(client: any) {
+    const containerItems = client.database(databaseId).container(containerId).items
     const container_items = await containerItems.query("SELECT * from c").fetchAll()
+
+
     const items = container_items["resources"]
     return items as any[]
 }
@@ -37,10 +39,28 @@ function AmbulanceItem({item}: any, hospital: string) {
 
 export default async function HospitalPage({ params }: any) {
     const hospital = params.hospitalId
-
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
     const containerItems = client.database(databaseId).container(containerId).items
-    const items = await get_container_items(containerItems)
+    const container_items = await containerItems.query("SELECT * from c").fetchAll()
+    const items = container_items["resources"]
+    const date = new Date(Date.UTC(0, 0, 0, 0, 0, 0, 0))
+
+    const i = await fetch('https://hosa-storage-database.documents.azure.com/dbs/hosa-database/containers/AmbulanceData', {
+        method: 'POST',
+        headers: {
+            'Authorization': primaryKey,
+            'Content-Type': 'application/query+json',
+            'x-ms-date': date.toUTCString(),
+            'x-ms-documentdb-isquery': 'True'
+        },
+        body: JSON.stringify({
+            'query': 'select * from c',
+            'parameters': []
+        }),
+        next: { revalidate: 1 }
+    })
+
+    console.log(i)
 
     return (
         <main >
