@@ -50,8 +50,6 @@ export default function InfoForm(ambulanceId: any) {
     const [patientId, setPatientId] = useState('')
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
-    const [statusPlaceholder, setStatusPlaceholder] = useState('Status') //todo: status placeholder form settings
-    const [unitPlaceholder, setUnitPlaceholder] = useState('Anticipated Unit')
 
     const item: ambulanceItem = {
         id: id,
@@ -65,6 +63,7 @@ export default function InfoForm(ambulanceId: any) {
 
     useEffect(() => {
         addItem(client, item).catch(r => console.error(r))
+        //todo: add geolocation api stuff
     }, [])
 
     const onClick = () => {
