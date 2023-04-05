@@ -6,8 +6,6 @@ import Script from "next/script";
 
 export const revalidate = 0;
 
-
-
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
@@ -40,16 +38,17 @@ export default async function HospitalPage({ params }: any) {
 
     const date = new Date(Date.UTC(0, 0, 0, 0, 0, 0, 0))
 
-    const i = await fetch('https://hosa-storage-database.documents.azure.com/dbs/hosa-database/colls/AmbulanceData', {
+    const i = await fetch('https://hosa-storage-database.documents.azure.com/dbs/hosa-database/colls/AmbulanceData/docs', {
         method: 'POST',
         headers: {
             'Authorization': primaryKey,
             'Content-Type': 'application/query+json',
+            'Accept': 'application/json',
             'x-ms-date': date.toUTCString(),
-            'x-ms-documentdb-isquery': 'True',
+            'T': 'True',
         },
         body: JSON.stringify({
-            'query': 'SELECT * from AmbulanceData',
+            'query': 'SELECT * FROM c',
             'parameters': []
         }),
         next: { revalidate: 0 }

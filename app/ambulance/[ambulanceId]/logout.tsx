@@ -12,33 +12,13 @@ const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3C
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
-interface ambulanceItem {
-    id: string
-    status: string
-    unit: string
-    lat: number
-    long: number
-
-}
-
 async function signOut(ambulanceId: string, router: any) {
     console.log(ambulanceId)
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
     const container = await client.database(databaseId).container(containerId)
     const item = await container.item(ambulanceId, ambulanceId).delete()
     console.log(item)
-    router.back()
-}
-
-async function addItem(client: CosmosClient, ambulanceId: string) {
-    const container = await client.database(databaseId).container(containerId)
-    const item = await container.item(ambulanceId, ambulanceId).read()
-}
-
-async function udpateItem(client: CosmosClient, ambulanceId: string) {
-    const container = await client.database(databaseId).container(containerId)
-    const item = await container.item(ambulanceId, ambulanceId).replace({}) //TODO: create interface instance
-    //todo: maybe change replace to patch
+    router.push('/')
 }
 
 export default function Logout(ambulanceId: any) {
