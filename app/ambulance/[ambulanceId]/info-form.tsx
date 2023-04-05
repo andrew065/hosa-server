@@ -1,8 +1,9 @@
 'use client'
 
-import { Button, Card, TextInput, Title } from "@tremor/react";
+import {Button, Card, Flex, Text, Title} from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState } from "react";
+import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
@@ -11,6 +12,7 @@ const containerId = 'AmbulanceData'
 
 interface ambulanceItem {
     id: string
+    hospital: string
     status: string
     patientId: string
     unit: string
@@ -18,8 +20,9 @@ interface ambulanceItem {
     long: number
 }
 
+const all_hospitals = ['Hospital 1', 'Hospital 2', 'Hospital 3']
 const all_status = ['en route', 'with patient', 'returning']
-const all_units = ['neuro', 'cardiac', 'emerg', 'trauma', 'burn', 'MUCC', 'surgery']
+const all_units = ['emergency', 'neuro', 'cardiac', 'trauma', 'burn', 'MUCC', 'surgery']
 
 async function addItem(client: CosmosClient, item: ambulanceItem) {
     const container = await client.database(databaseId).container(containerId)
@@ -33,12 +36,17 @@ async function updateItem(client: CosmosClient, item: ambulanceItem) {
     console.log('item updated', update)
 }
 
+async function updateLocation(lat: number, long: number) {
+    //todo: add patch function to update location
+}
+
 export default function InfoForm(ambulanceId: any) {
     const id = String(ambulanceId.ambulanceId)
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
 
+    const [hospital, setHospital] = useState(all_hospitals[0])
     const [status, setStatus] = useState(all_status[0])
-    const [unit, setUnit] = useState('')
+    const [unit, setUnit] = useState(all_units[0])
     const [patientId, setPatientId] = useState('')
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
@@ -47,6 +55,7 @@ export default function InfoForm(ambulanceId: any) {
 
     const item: ambulanceItem = {
         id: id,
+        hospital: hospital,
         status: status,
         patientId: patientId,
         unit: unit,
@@ -58,29 +67,41 @@ export default function InfoForm(ambulanceId: any) {
         addItem(client, item).catch(r => console.error(r))
     }, [])
 
+    const onClick = () => {
+        console.log(item)
+        updateItem(client, item).catch(r => console.error(r))
+    }
+
     return(
         <div>
             <Card className="space-y-2 p-10">
                 <Title className="pb-2">Patient Data</Title>
+                <div className="grid grid-cols-3 gap-x-3 gap-y-0">
+                    <div>
+                        <Text>Destination Hospital:</Text>
+                    </div>
+                    <div>
+                        <Text>Anticipated Unit:</Text>
+                    </div>
+                    <div>
+                        <Text>Status:</Text>
+                    </div>
+                    <div>
+                        <CreateListBox dataSelect={all_hospitals} variable={hospital} setVar={setHospital}/>
+                    </div>
+                    <div>
+                        <CreateListBox dataSelect={all_units} variable={unit} setVar={setUnit}/>
+                    </div>
+                    <div>
+                        <CreateListBox dataSelect={all_status} variable={status} setVar={setStatus}/>
+                    </div>
+                </div>
 
-
-
-
-                {/*<TextInput // TODO: add error/invalid input*/}
-                {/*    placeholder={statusPlaceholder}*/}
-                {/*    value={status}*/}
-                {/*    onChange={e => setStatus(e.target.value)}*/}
-                {/*/>*/}
-                {/*<TextInput // TODO: add error/invalid input*/}
-                {/*    placeholder={unitPlaceholder}*/}
-                {/*    value={unit}*/}
-                {/*    onChange={e => setUnit(e.target.value)}*/}
-                {/*/>*/}
-                {/*<div className="pt-3">*/}
-                {/*    <Button size="sm" onClick={() => console.log('button clicked')}>*/}
-                {/*        Set Variables*/}
-                {/*    </Button>*/}
-                {/*</div>*/}
+                <div className="pt-3">
+                    <Button size="sm" onClick={onClick}>
+                        Update
+                    </Button>
+                </div>
             </Card>
         </div>
     )

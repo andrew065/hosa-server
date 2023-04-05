@@ -25,8 +25,6 @@ export default function Logout(ambulanceId: any) {
     const id = String(ambulanceId.ambulanceId)
     const router = useRouter()
 
-    console.log(id)
-
     return(
         <div>
             <main className="bg-white shadow-md">
