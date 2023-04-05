@@ -1,6 +1,6 @@
 'use client'
 
-import {Button, Card, Flex, Text, Title} from "@tremor/react";
+import {Button, Card, TextInput, Text, Title} from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState } from "react";
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
@@ -93,6 +93,16 @@ export default function InfoForm(ambulanceId: any) {
                     </div>
                     <div>
                         <CreateListBox dataSelect={all_status} variable={status} setVar={setStatus}/>
+                    </div>
+                    <div>
+                        <TextInput
+                            placeholder="Patient Id"
+                            value={patientId}
+                            onChange={e => {
+                                setPatientId(e.target.value)
+                            }}
+                        >
+                        </TextInput>
                     </div>
                 </div>
 
