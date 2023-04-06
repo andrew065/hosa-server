@@ -5,6 +5,7 @@ import { CosmosClient } from '@azure/cosmos'
 import Script from "next/script";
 
 export const revalidate = 0;
+export const dynamic = 'force-static';
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
