@@ -1,9 +1,10 @@
 'use client'
 
-import {Button, Card, TextInput, Text, Title} from "@tremor/react";
+import {Button, Card, TextInput, Text, Title, Tab, TabList} from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState } from "react";
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
+import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
@@ -51,6 +52,8 @@ export default function InfoForm(ambulanceId: any) {
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
 
+    const [showCard, setShowCard] = useState(true)
+
     const item: ambulanceItem = {
         id: id,
         hospital: hospital,
@@ -62,7 +65,7 @@ export default function InfoForm(ambulanceId: any) {
     }
 
     useEffect(() => {
-        addItem(client, item).catch(r => console.error(r))
+        addItem(client, item).catch(r => console.error(r)) //todo: check database if item already exists
         //todo: add geolocation api stuff
     }, [])
 
@@ -74,43 +77,61 @@ export default function InfoForm(ambulanceId: any) {
     return(
         <div>
             <Card className="space-y-2 p-10">
-                <Title className="pb-2">Patient Data</Title>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-0">
-                    <div>
-                        <Text>Destination Hospital:</Text>
-                    </div>
-                    <div>
-                        <Text>Anticipated Unit:</Text>
-                    </div>
-                    <div>
-                        <Text>Status:</Text>
-                    </div>
-                    <div>
-                        <CreateListBox dataSelect={all_hospitals} variable={hospital} setVar={setHospital}/>
-                    </div>
-                    <div>
-                        <CreateListBox dataSelect={all_units} variable={unit} setVar={setUnit}/>
-                    </div>
-                    <div>
-                        <CreateListBox dataSelect={all_status} variable={status} setVar={setStatus}/>
-                    </div>
-                    <div>
-                        <TextInput
-                            placeholder="Patient Id"
-                            value={patientId}
-                            onChange={e => {
-                                setPatientId(e.target.value)
-                            }}
-                        >
-                        </TextInput>
-                    </div>
+                <Title className="pb-2">Ambulance Control Panel</Title>
+                <div className="pb-3">
+                    <Text>Patient Id:</Text>
+                    <TextInput
+                        className="shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-1"
+                        placeholder="Patient Id"
+                        value={patientId}
+                        onChange={e => {
+                            setPatientId(e.target.value)
+                        }}
+                    >
+                    </TextInput>
                 </div>
+                <>
+                    <TabList
+                        defaultValue="1"
+                        onValueChange={(value) => setShowCard(value === "1")}
+                        className="mt-6"
+                    >
+                        <Tab value="1" text="Patient Data" icon={UserIcon} />
+                        <Tab value="2" text="Google Maps" icon={MapIcon} />
+                    </TabList>
+                </>
+                {showCard ? (
+                    <div className="mt-6">
+                        <div className="grid grid-cols-3 gap-x-3 gap-y-0 pt-3">
+                            <div>
+                                <Text>Destination Hospital:</Text>
+                                <CreateListBox dataSelect={all_hospitals} variable={hospital} setVar={setHospital}/>
+                            </div>
+                            <div>
+                                <Text>Anticipated Unit:</Text>
+                                <CreateListBox dataSelect={all_units} variable={unit} setVar={setUnit}/>
+                            </div>
+                            <div>
+                                <Text>Status:</Text>
+                                <CreateListBox dataSelect={all_status} variable={status} setVar={setStatus}/>
+                            </div>
+                        </div>
+                        <div className="pt-5">
+                            <Button
+                                className="shadow-md focus-visible:border-indigo-500 focus-visible:ring-1"
+                                size="sm"
+                                onClick={onClick}
+                            >
+                                Update
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="mt-6">
+                        {/*todo: google maps integration*/}
 
-                <div className="pt-3">
-                    <Button size="sm" onClick={onClick}>
-                        Update
-                    </Button>
-                </div>
+                    </div>
+                )}
             </Card>
         </div>
     )
