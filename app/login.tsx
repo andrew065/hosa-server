@@ -55,6 +55,7 @@ export default function LoginPage() {
                         }}/>
                     <TextInput
                         placeholder="Password"
+                        type="password"
                         value={password}
                         error={passError}
                         errorMessage={errorMsg}

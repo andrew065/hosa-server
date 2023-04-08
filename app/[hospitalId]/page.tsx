@@ -1,8 +1,10 @@
+'use client'
+
 import { Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import Link from "next/link";
 import { CosmosClient } from '@azure/cosmos'
-import Script from "next/script";
+import {useEffect, useState} from "react";
 
 export const revalidate = 0;
 export const dynamic = 'force-static';
@@ -32,30 +34,21 @@ async function getItems(client: CosmosClient) {
     return container_items["resources"]
 }
 
-export default async function HospitalPage({ params }: any) {
+export default function HospitalPage({ params }: any) {
     const hospital = params.hospitalId
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
-    const items = await getItems(client)
+    const [items, setItems] = useState<any[]>([])
+    const [showLoading, setShowLoading] = useState(true)
 
-    const date = new Date(Date.UTC(0, 0, 0, 0, 0, 0, 0))
-
-    const i = await fetch('https://hosa-storage-database.documents.azure.com/dbs/hosa-database/colls/AmbulanceData/docs', {
-        method: 'POST',
-        headers: {
-            'Authorization': primaryKey,
-            'Content-Type': 'application/query+json',
-            'Accept': 'application/json',
-            'x-ms-date': date.toUTCString(),
-            'T': 'True',
-        },
-        body: JSON.stringify({
-            'query': 'SELECT * FROM c',
-            'parameters': []
-        }),
-        next: { revalidate: 0 }
-    })
-
-    console.log(i)
+    useEffect(() => {
+        const interval = setInterval( async () => {
+            const items = await getItems(client)
+            console.log(items)
+            setShowLoading(false)
+            setItems(items)
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [client, setItems])
 
     return (
         <main >
@@ -63,14 +56,12 @@ export default async function HospitalPage({ params }: any) {
                 <MenuBar header={hospital}/>
             </div>
             <div className="p-4 md:p-10 mx-auto max-w-7xl">
-                <Grid className="gap-6" numColsSm={2} numColsLg={3}>
-                    {items?.map((item) => {
-                        return <AmbulanceItem item={item} hospital={hospital}></AmbulanceItem>
-                    })}
-                </Grid>
-                <Script>
-
-                </Script>
+                {showLoading ? <Title className="text-center">Loading...</Title>:
+                    <Grid className="gap-6" numColsSm={2} numColsLg={3}>
+                        {items?.map((item) => {
+                            return <AmbulanceItem item={item} hospital={hospital}></AmbulanceItem>
+                        })}
+                    </Grid>}
             </div>
         </main>
     )
