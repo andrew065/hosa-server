@@ -2,9 +2,9 @@
 
 import { Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/menubar";
-import Link from "next/link";
 import { CosmosClient } from '@azure/cosmos'
 import {useEffect, useState} from "react";
+import { useRouter } from "next/navigation";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
@@ -13,15 +13,17 @@ const containerId = 'AmbulanceData'
 
 function AmbulanceItem({item}: any, hospital: string) {
     const {id, status, unit} = item || {}
+    const router = useRouter()
+    const link = "./" + hospital + "/ambulance/" + id
 
     return(
-        <Link key={id} href={`./${hospital}/ambulance/${item.id}`}>
-            <Card key={id}>
-                <Title>{`Ambulance Id: ${id}`}</Title>
-                <Text>{`Status: ${status}`}</Text>
-                <Text>{`Unit: ${unit}`}</Text>
-            </Card>
-        </Link>
+        <Card key={id} onClick={() => {
+            router.push(link)
+        }}>
+            <Title>{`${id}`}</Title>
+            <Text>{`Status: ${status}`}</Text>
+            <Text>{`Unit: ${unit}`}</Text>
+        </Card>
     )
 }
 
@@ -43,7 +45,7 @@ export default function HospitalPage({ params }: any) {
             console.log(items)
             setShowLoading(false)
             setItems(items)
-        }, 1000);
+        }, 5000);
         return () => clearInterval(interval);
     }, [client, setItems])
 

@@ -18,6 +18,7 @@ async function signOut(ambulanceId: string, router: any) {
     const container = await client.database(databaseId).container(containerId)
     const item = await container.item(ambulanceId, ambulanceId).delete()
     console.log(item)
+    client.dispose()
     router.push('/')
 }
 
