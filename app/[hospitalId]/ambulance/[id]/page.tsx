@@ -39,6 +39,7 @@ export default function HospitalPage({ params }: any) {
     console.log(params)
 
     return (
+
         <main >
             <div>
                 <MenuBar header={ambulance}/>

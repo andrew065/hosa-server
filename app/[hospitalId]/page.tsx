@@ -11,14 +11,13 @@ const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3C
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
-function AmbulanceItem({item}: any, hospital: string) {
+function AmbulanceItem({item}: any, link: string) {
     const {id, status, unit} = item || {}
     const router = useRouter()
-    const link = "./" + hospital + "/ambulance/" + id
 
     return(
         <Card key={id} onClick={() => {
-            router.push(link)
+            router.push(`${link}/${id}`)
         }}>
             <Title>{`${id}`}</Title>
             <Text>{`Status: ${status}`}</Text>
@@ -39,10 +38,11 @@ export default function HospitalPage({ params }: any) {
     const [items, setItems] = useState<any[]>([])
     const [showLoading, setShowLoading] = useState(true)
 
+    const link = `./${hospital}/ambulance/`
+
     useEffect(() => {
         const interval = setInterval( async () => {
             const items = await getItems(client)
-            console.log(items)
             setShowLoading(false)
             setItems(items)
         }, 5000);
@@ -55,10 +55,10 @@ export default function HospitalPage({ params }: any) {
                 <MenuBar header={hospital}/>
             </div>
             <div className="p-4 md:p-10 mx-auto max-w-7xl">
-                {showLoading ? <Title className="text-center">Loading...</Title>:
+                {showLoading ? <Title className="text-center">Loading Ambulance Data...</Title>:
                     <Grid className="gap-6" numColsSm={2} numColsLg={3}>
                         {items?.map((item) => {
-                            return <AmbulanceItem item={item} hospital={hospital}></AmbulanceItem>
+                            return <AmbulanceItem item={item} link={link}></AmbulanceItem>
                         })}
                     </Grid>}
             </div>
