@@ -16,6 +16,7 @@ interface ambulanceItem {
     hospital: string
     status: string
     patientId: string
+    patientAge: string
     unit: string
     lat: number
     long: number
@@ -48,7 +49,8 @@ export default function InfoForm(ambulanceId: any) {
     const [hospital, setHospital] = useState(all_hospitals[0])
     const [status, setStatus] = useState(all_status[0])
     const [unit, setUnit] = useState(all_units[0])
-    const [patientId, setPatientId] = useState('')
+    const [patientId, setPatientId] = useState('null')
+    const [patientAge, setPatientAge] = useState('null')
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
 
@@ -59,6 +61,7 @@ export default function InfoForm(ambulanceId: any) {
         hospital: hospital,
         status: status,
         patientId: patientId,
+        patientAge: patientAge,
         unit: unit,
         lat: lat,
         long: long
@@ -78,17 +81,29 @@ export default function InfoForm(ambulanceId: any) {
         <div>
             <Card className="space-y-2 p-10">
                 <Title className="pb-2">Ambulance Control Panel</Title>
-                <div className="pb-3">
-                    <Text>Patient Id:</Text>
-                    <TextInput
-                        className="shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-1"
-                        placeholder="Patient Id"
-                        value={patientId}
-                        onChange={e => {
-                            setPatientId(e.target.value)
-                        }}
-                    >
-                    </TextInput>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1 pb-3">
+                    <div>
+                        <Text>Patient Id:</Text>
+                        <TextInput
+                            className="shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-1"
+                            placeholder="Patient Id"
+                            value={patientId}
+                            onChange={e => {
+                                setPatientId(e.target.value)
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <Text>Age:</Text>
+                        <TextInput
+                            className="shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-1"
+                            placeholder="Age"
+                            value={patientAge}
+                            onChange={e => {
+                                setPatientAge(e.target.value)
+                            }}
+                        />
+                    </div>
                 </div>
                 <>
                     <TabList

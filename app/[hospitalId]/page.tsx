@@ -3,28 +3,14 @@
 import { Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import { CosmosClient } from '@azure/cosmos'
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
-
-function AmbulanceItem({item}: any, link: string) {
-    const {id, status, unit} = item || {}
-    const router = useRouter()
-
-    return(
-        <Card key={id} onClick={() => {
-            router.push(`${link}/${id}`)
-        }}>
-            <Title>{`${id}`}</Title>
-            <Text>{`Status: ${status}`}</Text>
-            <Text>{`Unit: ${unit}`}</Text>
-        </Card>
-    )
-}
 
 async function getItems(client: CosmosClient) {
     const containerItems = client.database(databaseId).container(containerId).items
@@ -38,7 +24,7 @@ export default function HospitalPage({ params }: any) {
     const [items, setItems] = useState<any[]>([])
     const [showLoading, setShowLoading] = useState(true)
 
-    const link = `./${hospital}/ambulance/`
+    const router = useRouter()
 
     useEffect(() => {
         const interval = setInterval( async () => {
@@ -50,7 +36,7 @@ export default function HospitalPage({ params }: any) {
     }, [client, setItems])
 
     return (
-        <main >
+        <main>
             <div>
                 <MenuBar header={hospital}/>
             </div>
@@ -58,7 +44,16 @@ export default function HospitalPage({ params }: any) {
                 {showLoading ? <Title className="text-center">Loading Ambulance Data...</Title>:
                     <Grid className="gap-6" numColsSm={2} numColsLg={3}>
                         {items?.map((item) => {
-                            return <AmbulanceItem item={item} link={link}></AmbulanceItem>
+                            const {id, status, unit} = item || {}
+                            return(
+                                <Card key={id} onClick={()=>{
+                                    router.push(`/${hospital}/ambulance/${id}`)
+                                }}>
+                                    <Title>{`${id}`}</Title>
+                                    <Text>{`Status: ${status}`}</Text>
+                                    <Text>{`Unit: ${unit}`}</Text>
+                                </Card>
+                            )
                         })}
                     </Grid>}
             </div>
