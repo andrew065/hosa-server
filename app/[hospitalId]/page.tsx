@@ -5,7 +5,6 @@ import MenuBar from "@/app/menubar";
 import { CosmosClient } from '@azure/cosmos'
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
@@ -34,6 +33,7 @@ export default function HospitalPage({ params }: any) {
         }, 5000);
         return () => clearInterval(interval);
     }, [client, setItems])
+
 
     return (
         <main>
