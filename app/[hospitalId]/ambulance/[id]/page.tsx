@@ -4,10 +4,9 @@ import {AreaChart, Card, Metric, Text, Title} from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import {CosmosClient} from "@azure/cosmos";
 import {useEffect, useState} from "react";
-// import initClient from "./client"
-import Script from "next/script";
 import {Client} from "azure-iot-device";
 import {Mqtt as Protocol} from "azure-iot-device-mqtt";
+import {Message} from "azure-iot-common";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
@@ -34,22 +33,28 @@ const performance = [
 const numberFormatter = (value: number) =>
     `${Intl.NumberFormat("us").format(value).toString()}`;
 
-function onMessage(msg: any) {
-    const m = msg.data()
-    console.log(m)
+function printResultFor(op: any) {
+    return function printResult(err: any, res: any) {
+        if (err) console.log(op + ' error: ' + err.toString());
+        if (res) console.log(op + ' status: ' + res.constructor.name);
+    };
 }
 
-async function initHub() {
+function initHub() {
     const iotClient = Client.fromConnectionString(deviceConnectionString, Protocol)
-    iotClient.on('connect', function () {
-        console.log('Client connected.')
-    })
+    const connectCallback = function (err: any) {
+        if (err) {
+            console.error('Could not connect: ' + err.message);
+        } else {
+            console.log('Client connected');
+            iotClient.on('message', function (msg: any) {
+                console.log('Id: ' + msg.messageId + ' Body: ' + msg.data);
+                iotClient.complete(msg, printResultFor('completed'));
+            });
+        }
+    }
 
-    iotClient.on('message', function (msg: any) {
-        onMessage(msg)
-    });
-
-    iotClient.open().catch((e: any) => console.log(e));
+    iotClient.open(connectCallback)
 }
 
 async function getItem(client: CosmosClient, itemId: string) {
@@ -81,11 +86,7 @@ export default function HospitalPage({ params }: any) {
         return () => clearInterval(interval);
     }, [client, setItem])
 
-    useEffect(() => {
-        const init = async() => {await initHub()}
-        init().catch((e) => console.log(e))
-    })
-
+    initHub()
 
     return (
         <main>

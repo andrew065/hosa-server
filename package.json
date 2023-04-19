@@ -35,8 +35,6 @@
   },
   "browser": {
     "child_process": false,
-    "fs": false,
-    "path": false,
-    "os": false
+    "fs": false
   }
 }
