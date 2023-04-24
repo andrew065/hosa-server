@@ -11,6 +11,8 @@ const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3C
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
+const mapsAPIKey = 'AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw'
+
 interface ambulanceItem {
     id: string
     hospital: string
