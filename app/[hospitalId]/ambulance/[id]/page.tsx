@@ -1,11 +1,12 @@
 'use client'
 
-import {AreaChart, Card, Metric, Text, Title} from "@tremor/react";
+import { AreaChart, Card, Metric, Text, Title } from "@tremor/react";
 import MenuBar from "@/app/menubar";
-import {CosmosClient} from "@azure/cosmos";
-import {useEffect, useState} from "react";
-import {Client} from "azure-iot-device";
-import {Mqtt as Protocol} from "azure-iot-device-mqtt";
+import { CosmosClient } from "@azure/cosmos";
+import { useEffect, useState } from "react";
+import { Client } from "azure-iot-device";
+import { Mqtt as Protocol } from "azure-iot-device-mqtt";
+import { EventHubConsumerClient } from "@azure/event-hubs";
 import {Message} from "azure-iot-common";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
@@ -57,6 +58,10 @@ function initHub() {
     iotClient.open(connectCallback)
 }
 
+function initClient() {
+    const endpoint = ""
+}
+
 async function getItem(client: CosmosClient, itemId: string) {
     const container = client.database(databaseId).container(containerId)
     const item = await container.item(itemId, itemId).read()
@@ -86,7 +91,7 @@ export default function HospitalPage({ params }: any) {
         return () => clearInterval(interval);
     }, [client, setItem])
 
-    initHub()
+    // initHub()
 
     return (
         <main>
