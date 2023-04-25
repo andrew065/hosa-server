@@ -13,7 +13,7 @@ const containerId = 'AmbulanceData'
 
 async function getItems(client: CosmosClient) {
     const containerItems = client.database(databaseId).container(containerId).items
-    const container_items = await containerItems.query("SELECT * from c").fetchAll()
+    const container_items = await containerItems.query("SELECT * from c ORDER BY c.connected DESC").fetchAll()
     return container_items["resources"]
 }
 
@@ -44,14 +44,15 @@ export default function HospitalPage({ params }: any) {
                 {showLoading ? <Title className="text-center">Loading Ambulance Data...</Title>:
                     <Grid className="gap-6" numColsSm={2} numColsLg={3}>
                         {items?.map((item) => {
-                            const {id, status, unit} = item || {}
+                            const {id, status, unit, connected} = item || {}
                             return(
-                                <Card key={id} onClick={()=>{
+                                <Card className={connected? 'bg-white': 'bg-grey'} key={id} onClick={()=>{ //todo: variable onClick function
                                     router.push(`/${hospital}/ambulance/${id}`)
                                 }}>
                                     <Title>{`${id}`}</Title>
                                     <Text>{`Status: ${status}`}</Text>
                                     <Text>{`Unit: ${unit}`}</Text>
+                                    <Text className="pt-3">{connected? "Connected": "Disconnected"}</Text>
                                 </Card>
                             )
                         })}

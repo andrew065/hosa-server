@@ -1,6 +1,6 @@
 'use client'
 
-import { AreaChart, Card, Metric, Text, Title } from "@tremor/react";
+import {AreaChart, Card, Metric, Tab, TabList, Text, Title} from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { Client } from "azure-iot-device";
 import { Mqtt as Protocol } from "azure-iot-device-mqtt";
 import { EventHubConsumerClient } from "@azure/event-hubs";
 import {Message} from "azure-iot-common";
+import {MapIcon, UserIcon} from "@heroicons/react/24/solid";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
@@ -76,6 +77,7 @@ export default function HospitalPage({ params }: any) {
     const [showLoading, setShowLoading] = useState(true)
     const [array, setArray] = useState(performance)
 
+    const [showCard, setShowCard] = useState(true)
     const [counter, setCounter] = useState(0)
 
     useEffect(() => {
@@ -120,17 +122,40 @@ export default function HospitalPage({ params }: any) {
                         </Card>
                     </div>
                     <Card>
-                        <Title>ECG Graph</Title>
-                        <AreaChart
-                            data={array}
-                            index="seconds"
-                            categories={["voltage"]}
-                            colors={["blue"]}
-                            showLegend={false}
-                            valueFormatter={numberFormatter}
-                            yAxisWidth={56}
-                            className="h-96 mt-8"
-                        />
+                        <>
+                            <TabList
+                                defaultValue="1"
+                                onValueChange={(value) => setShowCard(value === "1")}
+                                className="mt-6"
+                            >
+                                <Tab value="1" text="Patient Data" icon={UserIcon} />
+                                <Tab value="2" text="Google Maps" icon={MapIcon} />
+                            </TabList>
+                        </>
+                        {showCard ? (
+                            <div>
+                                <Title>ECG Graph</Title>
+                                <AreaChart
+                                    data={array}
+                                    index="seconds"
+                                    categories={["voltage"]}
+                                    colors={["blue"]}
+                                    showLegend={false}
+                                    valueFormatter={numberFormatter}
+                                    yAxisWidth={56}
+                                    className="h-96 mt-8"
+                                />
+                            </div> ): (
+                            <div>
+
+                            </div>
+                        )}
+                    </Card>
+
+
+                    <Card>
+
+
                     </Card>
                 </div>
             </div> }

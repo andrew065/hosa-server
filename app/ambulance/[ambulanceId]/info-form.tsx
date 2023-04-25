@@ -3,16 +3,16 @@
 import {Button, Card, TextInput, Text, Title, Tab, TabList} from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState, useMemo } from "react";
-import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
-
+import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
+const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
 
 interface ambulanceItem {
     id: string
@@ -23,37 +23,30 @@ interface ambulanceItem {
     unit: string
     lat: number
     long: number
+    connected: boolean
 }
 
 const all_hospitals = ['Hospital 1', 'Hospital 2', 'Hospital 3']
 const all_status = ['en route', 'with patient', 'returning']
 const all_units = ['emergency', 'neuro', 'cardiac', 'trauma', 'burn', 'MUCC', 'surgery']
 
-async function addItem(client: CosmosClient, item: ambulanceItem) {
-    const container = await client.database(databaseId).container(containerId)
-    const add = await container.items.create<ambulanceItem>(item)
-    console.log('item added', add)
-}
-
 async function updateItem(client: CosmosClient, item: ambulanceItem) {
     const container = await client.database(databaseId).container(containerId)
-    const update = await container.item(item.id, item.id).replace<ambulanceItem>(item) //todo: maybe change replace to patch
+    const update = await container.item(item.id, item.id).replace<ambulanceItem>(item)
     console.log('item updated', update)
 }
 
-async function updateLocation(lat: number, long: number) {
-    //todo: add patch function to update location
+async function updateLocation(client: CosmosClient, id: string, lat: number, long: number) {
+    const operations = [
+        {op: 'set', path: '/lat', value: lat},
+        {op: 'set', path: '/long', value: long}
+    ]
+    const container = await client.database(databaseId).container(containerId)
+    // @ts-ignore
+    const patch = await container.item(id, id).patch(operations)
+    console.log('patch location: ', patch)
 }
-//Google maps function (Don't add async)
-function Map(){
-    const center = useMemo(()  =>
-        ({lat: 43.8699, lng: -79.4503}), [])
-    return (
-        <GoogleMap zoom={15} center={center} mapContainerClassName={"map-container"}>
-            <Marker position={center}></Marker>
-        </GoogleMap>
-    )
-}
+
 export default function InfoForm(ambulanceId: any) {
     const id = String(ambulanceId.ambulanceId)
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
@@ -68,6 +61,8 @@ export default function InfoForm(ambulanceId: any) {
 
     const [showCard, setShowCard] = useState(true)
 
+    const position = useMemo(()  => ({lat: lat, lng: long}), [lat, long])
+
     const item: ambulanceItem = {
         id: id,
         hospital: hospital,
@@ -76,24 +71,38 @@ export default function InfoForm(ambulanceId: any) {
         patientAge: patientAge,
         unit: unit,
         lat: lat,
-        long: long
+        long: long,
+        connected: true
     }
 
     useEffect(() => {
-        addItem(client, item).catch(r => console.error(r)) //todo: check database if item already exists
-        //todo: add geolocation api stuff
-    }, [])
+        updateItem(client, item).catch(r => console.error(r))
+        const interval = setInterval(() => {
+            if('geolocation' in navigator) {
+                // Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
+                navigator.geolocation.getCurrentPosition(({ coords }) => {
+                    const { latitude, longitude } = coords;
+                    setLat(latitude)
+                    setLong(longitude)
+                    updateLocation(client, item.id, latitude, longitude).catch(r => console.error(r))
+                })
+            }
+        }, 1000)
+        return () => {
+            clearInterval(interval)
+            client.dispose()
+        }
+    }, [client])
+
+    const {isLoaded} = useLoadScript({
+        googleMapsApiKey: mapsAPIKey
+    });
 
     const onClick = () => {
         console.log(item)
         updateItem(client, item).catch(r => console.error(r))
     }
 
-    //Google Maps API
-    const {isLoaded} = useLoadScript({
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string,
-    });
-    if(!isLoaded) return <div>Loading...</div>
     return(
         <div>
             <Card className="space-y-2 p-10">
@@ -161,7 +170,9 @@ export default function InfoForm(ambulanceId: any) {
                 ) : (
                     <div className="mt-6">
                         {/*todo: google maps integration*/}
-                        <Map/>
+                        <GoogleMap zoom={15} center={position} mapContainerClassName={"map-container"}>
+                            <Marker position={position}></Marker>
+                        </GoogleMap>
                     </div>
                 )}
             </Card>
