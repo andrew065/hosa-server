@@ -15,7 +15,11 @@ module.exports = {
       padding: '5rem',
     },
     colours: {
-      'white': '#f8fafc'
+      'white': '#f8fafc',
+      'grey': '#e5e7eb',
+      'dark-grey': '#9ca3af',
+      'zinc': '#d4d4d8',
+      'slate': '#94a3b8'
     }
   },
   plugins: [],

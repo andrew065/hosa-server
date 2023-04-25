@@ -12,12 +12,11 @@ const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3C
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
-async function signOut(ambulanceId: string, router: any) {
-    console.log(ambulanceId)
+async function signOut(id: string, router: any) {
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
     const container = await client.database(databaseId).container(containerId)
-    const item = await container.item(ambulanceId, ambulanceId).delete()
-    console.log(item)
+    const patch = await container.item(id, id).patch([{op: 'set', path: '/connected', value: false}])
+    console.log(patch)
     client.dispose()
     router.push('/')
 }
