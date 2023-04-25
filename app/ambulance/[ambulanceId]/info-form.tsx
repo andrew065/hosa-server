@@ -2,16 +2,17 @@
 
 import {Button, Card, TextInput, Text, Title, Tab, TabList} from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
+
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 
-const mapsAPIKey = 'AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw'
 
 interface ambulanceItem {
     id: string
@@ -43,7 +44,16 @@ async function updateItem(client: CosmosClient, item: ambulanceItem) {
 async function updateLocation(lat: number, long: number) {
     //todo: add patch function to update location
 }
-
+//Google maps function (Don't add async)
+function Map(){
+    const center = useMemo(()  =>
+        ({lat: 43.8699, lng: -79.4503}), [])
+    return (
+        <GoogleMap zoom={15} center={center} mapContainerClassName={"map-container"}>
+            <Marker position={center}></Marker>
+        </GoogleMap>
+    )
+}
 export default function InfoForm(ambulanceId: any) {
     const id = String(ambulanceId.ambulanceId)
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
@@ -79,6 +89,11 @@ export default function InfoForm(ambulanceId: any) {
         updateItem(client, item).catch(r => console.error(r))
     }
 
+    //Google Maps API
+    const {isLoaded} = useLoadScript({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string,
+    });
+    if(!isLoaded) return <div>Loading...</div>
     return(
         <div>
             <Card className="space-y-2 p-10">
@@ -146,7 +161,7 @@ export default function InfoForm(ambulanceId: any) {
                 ) : (
                     <div className="mt-6">
                         {/*todo: google maps integration*/}
-
+                        <Map/>
                     </div>
                 )}
             </Card>
