@@ -3,19 +3,32 @@
 import {AreaChart, Card, Metric, Tab, TabList, Text, Title} from "@tremor/react";
 import MenuBar from "@/app/menubar";
 import { CosmosClient } from "@azure/cosmos";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import { Client } from "azure-iot-device";
 import { Mqtt as Protocol } from "azure-iot-device-mqtt";
 import { EventHubConsumerClient } from "@azure/event-hubs";
-import {Message} from "azure-iot-common";
 import {MapIcon, UserIcon} from "@heroicons/react/24/solid";
+import {GoogleMap, Marker, useLoadScript} from "@react-google-maps/api";
+import Script from "next/script";
 
 const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
 const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
 const databaseId = 'hosa-database'
 const containerId = 'AmbulanceData'
 const deviceConnectionString = "HostName=hosa-iot-hub.azure-devices.net;DeviceId=web-client;SharedAccessKey=wuq7EU5/Kq7GPn52qLFSVlSAQPFDZf3XXcnOZ+n5hTU="
+const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
 
+interface ambulanceItem {
+    id: string
+    hospital: string
+    status: string
+    patientId: string
+    patientAge: string
+    unit: string
+    lat: number
+    long: number
+    connected: boolean
+}
 
 const performance = [
     {
@@ -60,8 +73,21 @@ function initHub() {
 }
 
 function initClient() {
-    const endpoint = ""
+    const connectionString = "Endpoint=sb://ihsuproddmres005dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=62cyzu9CC+sjoXQiDtnOqs7izFXj8h0aZC7WaaD2r9Y=;EntityPath=iothub-ehub-hosa-iot-h-24798124-b51daa76f5"
+    const iotHub = new EventHubConsumerClient("$Default", connectionString)
+    iotHub.subscribe({
+        processEvents: (messages) => {
+            for (const message of messages) {
+                console.log("Telementry received: ")
+                console.log(JSON.stringify(message.body))
+                console.log("Properties (set by device): ")
+                console.log(JSON.stringify(message.properties))
+            }
+        },
+        processError: (err) => {console.log(err.message)}
+    })
 }
+
 
 async function getItem(client: CosmosClient, itemId: string) {
     const container = client.database(databaseId).container(containerId)
@@ -73,7 +99,17 @@ export default function HospitalPage({ params }: any) {
     let ambulance = params.id
 
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
-    const [item, setItem] = useState<any>()
+    const [item, setItem] = useState<ambulanceItem>({
+        id: ambulance,
+        hospital: '',
+        status: '',
+        patientId: '',
+        patientAge: '',
+        unit: '',
+        lat: 0,
+        long: 0,
+        connected: true
+    })
     const [showLoading, setShowLoading] = useState(true)
     const [array, setArray] = useState(performance)
 
@@ -89,11 +125,19 @@ export default function HospitalPage({ params }: any) {
             // setCounter(counter + 1)
             // setArray(performance)
 
-        }, 5000);
+        }, 1000);
         return () => clearInterval(interval);
     }, [client, setItem])
 
+    const position = useMemo(()  => ({lat: item.lat, lng: item.long}), [item])
+    const {isLoaded} = useLoadScript({
+        googleMapsApiKey: mapsAPIKey
+    });
+
+    const mapRef = useRef()
+
     // initHub()
+    // initClient()
 
     return (
         <main>
@@ -101,7 +145,6 @@ export default function HospitalPage({ params }: any) {
                 <MenuBar header={ambulance}/>
             </div>
             {showLoading ? <Title className="text-center pt-3">Loading Ambulance Data...</Title>:
-            <div>
                 <div className="p-4 md:p-10 mx-auto max-w-7xl">
                     <div className="grid grid-cols-2 gap-x-3 gap-y-3 pb-3">
                         <Card>
@@ -121,20 +164,20 @@ export default function HospitalPage({ params }: any) {
                             <Metric>{item.unit}</Metric>
                         </Card>
                     </div>
-                    <Card>
+                    <Card className="space-y-2 pt-3 pl-10 pr-10 pb-10">
                         <>
                             <TabList
                                 defaultValue="1"
                                 onValueChange={(value) => setShowCard(value === "1")}
                                 className="mt-6"
                             >
-                                <Tab value="1" text="Patient Data" icon={UserIcon} />
-                                <Tab value="2" text="Google Maps" icon={MapIcon} />
+                                <Tab value="1" text="Patient ECG Graph" icon={UserIcon} />
+                                <Tab value="2" text="Ambulance Map" icon={MapIcon} />
                             </TabList>
                         </>
                         {showCard ? (
                             <div>
-                                <Title>ECG Graph</Title>
+                                <Title className="pt-3">ECG Graph</Title>
                                 <AreaChart
                                     data={array}
                                     index="seconds"
@@ -146,19 +189,29 @@ export default function HospitalPage({ params }: any) {
                                     className="h-96 mt-8"
                                 />
                             </div> ): (
-                            <div>
-
+                            <div className="pt-3">
+                                {/*<GoogleMap*/}
+                                {/*    zoom={15}*/}
+                                {/*    center={position}*/}
+                                {/*    mapContainerClassName={"map-container"}*/}
+                                {/*>*/}
+                                {/*    <Marker position={position}></Marker>*/}
+                                {/*</GoogleMap>*/}
+                                <Script
+                                    id="map"
+                                    src="https://maps.googleapis.com/maps/api/js?"
+                                    // onReady={() => {
+                                    //     new google.maps.Map(mapRef.current, {
+                                    //         center: {lat: -34.397, lng: 150.644},
+                                    //         zoom: 15,
+                                    //         // mapId: '734417b49ef297d3'
+                                    //     })
+                                    // }}
+                                />
                             </div>
                         )}
                     </Card>
-
-
-                    <Card>
-
-
-                    </Card>
-                </div>
-            </div> }
+                </div>}
         </main>
     )
 }
