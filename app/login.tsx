@@ -1,8 +1,9 @@
 'use client'
 
-import {Card, TextInput, Title, Button} from "@tremor/react";
+import {Card, TextInput, Title, Button, Text} from "@tremor/react";
 import { useRouter, } from 'next/navigation'
 import { useState, } from 'react'
+import Image from 'next/image'
 import verify from './login-authentication'
 
 export default function LoginPage() {
@@ -41,36 +42,41 @@ export default function LoginPage() {
 
     return (
         <main className="container mx-auto">
-            <div className="">
-                <Card className="space-y-2 p-10">
-                    <Title className="pb-2">Login</Title>
-                    <TextInput
-                        placeholder="Username"
-                        value={username}
-                        error={userError}
-                        onChange={e => {
-                            setUser(e.currentTarget.value)
-                            setErrorMsg('')
-                            setUserError(false)
-                        }}/>
-                    <TextInput
-                        placeholder="Password"
-                        type="password"
-                        value={password}
-                        error={passError}
-                        errorMessage={errorMsg}
-                        onChange={e => {
-                            setPass(e.currentTarget.value)
-                            setErrorMsg('')
-                            setPassError(false)
-                        }}
-                    />
-                    <div className="pt-3">
-                        <Button size="sm" onClick={() => handleClick()}>
-                            Login
-                        </Button>
-                    </div>
-                </Card>
+            <div className="pt-10 grid grid-cols-1">
+                <div className="mx-auto">
+                    <Image className="pb-3" src="/hosa_logo.png" alt="/hosa_logo.png" width={300} height={100}/>
+                </div>
+                <div>
+                    <Card className="space-y-2 p-10">
+                        <Title className="pb-2">Login</Title>
+                        <TextInput
+                            placeholder="Username"
+                            value={username}
+                            error={userError}
+                            onChange={e => {
+                                setUser(e.currentTarget.value)
+                                setErrorMsg('')
+                                setUserError(false)
+                            }}/>
+                        <TextInput
+                            placeholder="Password"
+                            type="password"
+                            value={password}
+                            error={passError}
+                            errorMessage={errorMsg}
+                            onChange={e => {
+                                setPass(e.currentTarget.value)
+                                setErrorMsg('')
+                                setPassError(false)
+                            }}
+                        />
+                        <div className="pt-3">
+                            <Button size="sm" onClick={() => handleClick()}>
+                                Login
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
             </div>
         </main>
     )
