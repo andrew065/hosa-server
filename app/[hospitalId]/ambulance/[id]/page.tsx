@@ -72,21 +72,21 @@ function initHub() {
     iotClient.open(connectCallback)
 }
 
-function initClient() {
-    const connectionString = "Endpoint=sb://ihsuproddmres005dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=62cyzu9CC+sjoXQiDtnOqs7izFXj8h0aZC7WaaD2r9Y=;EntityPath=iothub-ehub-hosa-iot-h-24798124-b51daa76f5"
-    const iotHub = new EventHubConsumerClient("$Default", connectionString)
-    iotHub.subscribe({
-        processEvents: (messages) => {
-            for (const message of messages) {
-                console.log("Telementry received: ")
-                console.log(JSON.stringify(message.body))
-                console.log("Properties (set by device): ")
-                console.log(JSON.stringify(message.properties))
-            }
-        },
-        processError: (err) => {console.log(err.message)}
-    })
-}
+// function initClient() {
+//     const connectionString = "Endpoint=sb://ihsuproddmres005dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=62cyzu9CC+sjoXQiDtnOqs7izFXj8h0aZC7WaaD2r9Y=;EntityPath=iothub-ehub-hosa-iot-h-24798124-b51daa76f5"
+//     const iotHub = new EventHubConsumerClient("$Default", connectionString)
+//     iotHub.subscribe({
+//         processEvents: (messages) => {
+//             for (const message of messages) {
+//                 console.log("Telementry received: ")
+//                 console.log(JSON.stringify(message.body))
+//                 console.log("Properties (set by device): ")
+//                 console.log(JSON.stringify(message.properties))
+//             }
+//         },
+//         processError: (err) => {console.log(err.message)}
+//     })
+// }
 
 
 async function getItem(client: CosmosClient, itemId: string) {
