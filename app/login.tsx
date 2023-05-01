@@ -19,7 +19,7 @@ export default function LoginPage() {
         if (valid === 'hospital') {
             setUserError(false)
             setErrorMsg('')
-            router.push(`./${username}`) // TODO: add authentication
+            router.push(`./${username}`)
         }
         else if (valid === 'ambulance') {
             setUserError(false)

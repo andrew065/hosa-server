@@ -1,36 +1,33 @@
+'use client'
+
 import {Card, Grid, Text, Title} from "@tremor/react";
-import {router} from "next/client";
 import {useRouter} from "next/navigation";
 
-interface patientItem {
-    id: string
-    age: number
-    status: string
-    unit: string
-    ecgStart: string
-    ecgEnd: string
-    ambulanceId: string
-    hospitalId: string
-    active: boolean
+interface props {
+    items: any[]
+    url: string
 }
 
-export default function CardGrid(items: patientItem[], url: string) {
+export default function CardGrid(variables: props) {
     const router = useRouter()
 
     return(
         <div>
-            {items?.map((item) => {
-                const {id, status, unit} = item || {}
-                return(
-                    <Card className={'bg-white'} key={id} onClick={()=>{ //todo: variable onClick function
-                        router.push(url + id)
-                    }}>
-                        <Title>{`${id}`}</Title>
-                        <Text>{`Status: ${status}`}</Text>
-                        <Text>{`Unit: ${unit}`}</Text>
-                    </Card>
-                )
-            })}
+            <Grid className="gap-6" numColsSm={2} numColsLg={3}>
+                {variables.items?.map((item) => {
+                    const {id, status, unit, ambulanceId} = item || {}
+                    return(
+                        <Card className={'bg-white'} key={id} onClick={()=>{
+                            router.push(variables.url + id)
+                        }}>
+                            <Title>{`${id}`}</Title>
+                            <Text>{`Status: ${status}`}</Text>
+                            <Text>{`Unit: ${unit}`}</Text>
+                            <Text className="pt-3">{`Ambulance: ${ambulanceId}`}</Text>
+                        </Card>
+                    )
+                })}
+            </Grid>
         </div>
     )
 }
