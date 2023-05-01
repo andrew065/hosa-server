@@ -6,14 +6,14 @@ import { CosmosClient } from "@azure/cosmos";
 import {useEffect, useMemo, useRef, useState} from "react";
 import { Client } from "azure-iot-device";
 import { Mqtt as Protocol } from "azure-iot-device-mqtt";
-import { EventHubConsumerClient } from "@azure/event-hubs";
+import { Chart } from "chart.js/auto"
 import {MapIcon, UserIcon} from "@heroicons/react/24/solid";
 import {GoogleMap, Marker, useLoadScript} from "@react-google-maps/api";
 import Script from "next/script";
 
-const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
-const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
-const databaseId = 'hosa-database'
+const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
+const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
+const databaseId = 'hosadb'
 const containerId = 'AmbulanceData'
 const deviceConnectionString = "HostName=hosa-iot-hub.azure-devices.net;DeviceId=web-client;SharedAccessKey=wuq7EU5/Kq7GPn52qLFSVlSAQPFDZf3XXcnOZ+n5hTU="
 const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
@@ -146,7 +146,7 @@ export default function HospitalPage({ params }: any) {
             </div>
             {showLoading ? <Title className="text-center pt-3">Loading Ambulance Data...</Title>:
                 <div className="p-4 md:p-10 mx-auto max-w-7xl">
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-3 pb-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-3 pb-3">
                         <Card>
                             <Text>Patient Id:</Text>
                             <Metric>{item.patientId}</Metric>
@@ -164,7 +164,7 @@ export default function HospitalPage({ params }: any) {
                             <Metric>{item.unit}</Metric>
                         </Card>
                     </div>
-                    <Card className="space-y-2 pt-3 pl-10 pr-10 pb-10">
+                    <Card className="md:space-y-2 md:pt-2 pl-3 px-3 md:px-10 md:pl-10">
                         <>
                             <TabList
                                 defaultValue="1"

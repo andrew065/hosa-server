@@ -1,15 +1,15 @@
 'use client'
 
-import {Button, Card, TextInput, Text, Title, Tab, TabList} from "@tremor/react";
+import { Button, Card, TextInput, Text, Title, Tab, TabList } from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState, useMemo } from "react";
 import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 
-const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
-const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
-const databaseId = 'hosa-database'
+const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
+const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
+const databaseId = 'hosadb'
 const containerId = 'AmbulanceData'
 
 const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
@@ -29,6 +29,7 @@ interface ambulanceItem {
 const all_hospitals = ['Hospital 1', 'Hospital 2', 'Hospital 3']
 const all_status = ['en route', 'with patient', 'returning']
 const all_units = ['emergency', 'neuro', 'cardiac', 'trauma', 'burn', 'MUCC', 'surgery']
+const all_devices = ['']
 
 async function updateItem(client: CosmosClient, item: ambulanceItem) {
     const container = await client.database(databaseId).container(containerId)
@@ -105,9 +106,9 @@ export default function InfoForm(ambulanceId: any) {
 
     return(
         <div>
-            <Card className="space-y-2 p-10">
+            <Card className="space-y-2 p-5 md:p-10">
                 <Title className="pb-2">Ambulance Control Panel</Title>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1 pb-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 pb-3">
                     <div>
                         <Text>Patient Id:</Text>
                         <TextInput
@@ -143,7 +144,7 @@ export default function InfoForm(ambulanceId: any) {
                 </>
                 {showCard ? (
                     <div className="mt-6">
-                        <div className="grid grid-cols-3 gap-x-3 gap-y-0 pt-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-3 gap-y-0 pt-3">
                             <div>
                                 <Text>Destination Hospital:</Text>
                                 <CreateListBox dataSelect={all_hospitals} variable={hospital} setVar={setHospital}/>

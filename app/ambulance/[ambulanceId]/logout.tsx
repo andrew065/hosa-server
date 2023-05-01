@@ -7,9 +7,9 @@ import Image from 'next/image'
 import classNames from "classnames";
 import {CosmosClient} from "@azure/cosmos";
 
-const endpoint = 'https://hosa-storage-database.documents.azure.com:443/' //URI
-const primaryKey = 'DX1PGkqsKsqBMQsPw1k5YkokOzMupR0ezAls4fXYctxy55HsOaH9gjhonD3CPiwDv5d9j0f6ncRBACDb4DItXw=='
-const databaseId = 'hosa-database'
+const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
+const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
+const databaseId = 'hosadb'
 const containerId = 'AmbulanceData'
 
 async function signOut(id: string, router: any) {
@@ -36,7 +36,7 @@ export default function Logout(ambulanceId: any) {
                         <div >
                             <Menu>
                                 <div>
-                                    <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                                    <Menu.Button className="flex rounded-full bg-white text-sm hover:outline-none hover:ring-2 hover:ring-slate-500 hover:ring-offset-2">
                                         <span className="sr-only">Open user menu</span>
                                         <Image
                                             className="h-8 w-8 rounded-full"
