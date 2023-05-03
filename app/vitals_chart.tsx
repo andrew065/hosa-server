@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { Card, LineChart, Title } from "@tremor/react";
+import {Card, Flex, Metric, Title, Text, AreaChart} from "@tremor/react";
 
 const numberFormatter = (value: number) =>
     `${Intl.NumberFormat("us").format(value).toString()}`;
@@ -14,9 +14,11 @@ export default function ECGChart() {
 
     useEffect(() => {
         const interval = setInterval( () => {
-            const item = [{seconds: 1 + count, voltage: 1 + count}]
+            const item = [{seconds: 2 ^ count, voltage: 2 ^ count}]
             const history = chartData
-            history.shift()
+            if (history.length > 5) {
+                history.shift()
+            }
             setCount(count + 1)
             setChartData(history.concat(item))
         }, 2000)
@@ -27,14 +29,28 @@ export default function ECGChart() {
 
     return(
         <div className="mx-auto">
-            <Card>
-                <Title className="text-center">Live ECG Chart</Title>
-                <LineChart
+            <Card className="space-y-2 p-5 md:p-10">
+                <Flex>
+                    <div>
+                        <Text className="font-semibold text-black">Pulse:</Text>
+                        <Metric className="text-red-500">--</Metric>
+                    </div>
+                    <div>
+                        <Text className="font-semibold text-black">BP:</Text>
+                        <Metric className="text-yellow-500">--</Metric>
+                    </div>
+                    <div>
+                        <Text className="font-semibold text-black">SpO2:</Text>
+                        <Metric className="text-blue-600">--</Metric>
+                    </div>
+                </Flex>
+                <Title className="">Live ECG Chart</Title>
+                <AreaChart
                     data={chartData}
                     index="seconds"
                     categories={["voltage"]}
-                    colors={["blue"]}
-                    showAnimation={true}
+                    colors={["red"]}
+                    showAnimation={false}
                     showLegend={false}
                     showTooltip={false}
                     autoMinValue={true}
