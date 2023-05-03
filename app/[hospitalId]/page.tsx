@@ -2,6 +2,7 @@
 
 import { Grid, Title, Card, Text } from "@tremor/react";
 import MenuBar from "@/app/menubar";
+import PatientList from "@/app/patient_list";
 import { CosmosClient } from '@azure/cosmos'
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -25,14 +26,14 @@ export default function HospitalPage({ params }: any) {
 
     const router = useRouter()
 
-    useEffect(() => {
-        const interval = setInterval( async () => {
-            const items = await getItems(client)
-            setShowLoading(false)
-            setItems(items)
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [client, setItems])
+    // useEffect(() => {
+    //     const interval = setInterval( async () => {
+    //         const items = await getItems(client)
+    //         setShowLoading(false)
+    //         setItems(items)
+    //     }, 5000);
+    //     return () => clearInterval(interval);
+    // }, [client, setItems])
 
 
     return (
@@ -40,23 +41,25 @@ export default function HospitalPage({ params }: any) {
             <div>
                 <MenuBar header={hospital}/>
             </div>
+
             <div className="p-4 md:p-10 mx-auto max-w-7xl">
-                {showLoading ? <Title className="text-center">Loading Ambulance Data...</Title>:
-                    <Grid className="gap-6" numColsSm={2} numColsLg={3}>
-                        {items?.map((item) => {
-                            const {id, status, unit, connected} = item || {}
-                            return(
-                                <Card className={connected? 'bg-white': 'bg-grey'} key={id} onClick={()=>{ //todo: variable onClick function
-                                    router.push(`/${hospital}/ambulance/${id}`)
-                                }}>
-                                    <Title>{`${id}`}</Title>
-                                    <Text>{`Status: ${status}`}</Text>
-                                    <Text>{`Unit: ${unit}`}</Text>
-                                    <Text className="pt-3">{connected? "Connected": "Disconnected"}</Text>
-                                </Card>
-                            )
-                        })}
-                    </Grid>}
+                <PatientList hospital={hospital} />
+            {/*    {showLoading ? <Title className="text-center">Loading Ambulance Data...</Title>:*/}
+            {/*        <Grid className="gap-6" numColsSm={2} numColsLg={3}>*/}
+            {/*            {items?.map((item) => {*/}
+            {/*                const {id, status, unit, connected} = item || {}*/}
+            {/*                return(*/}
+            {/*                    <Card className={connected? 'bg-white': 'bg-grey'} key={id} onClick={()=>{ //todo: variable onClick function*/}
+            {/*                        router.push(`/${hospital}/ambulance/${id}`)*/}
+            {/*                    }}>*/}
+            {/*                        <Title>{`${id}`}</Title>*/}
+            {/*                        <Text>{`Status: ${status}`}</Text>*/}
+            {/*                        <Text>{`Unit: ${unit}`}</Text>*/}
+            {/*                        <Text className="pt-3">{connected? "Connected": "Disconnected"}</Text>*/}
+            {/*                    </Card>*/}
+            {/*                )*/}
+            {/*            })}*/}
+            {/*        </Grid>}*/}
             </div>
         </main>
     )
