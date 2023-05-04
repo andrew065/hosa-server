@@ -13,7 +13,7 @@ import Script from "next/script";
 
 const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
 const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
-const databaseId = 'hosadb'
+const databaseId = 'testdb'
 const containerId = 'AmbulanceData'
 const deviceConnectionString = "HostName=hosa-iot-hub.azure-devices.net;DeviceId=web-client;SharedAccessKey=wuq7EU5/Kq7GPn52qLFSVlSAQPFDZf3XXcnOZ+n5hTU="
 const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
@@ -31,18 +31,7 @@ interface ambulanceItem {
 }
 
 const performance = [
-    {
-        seconds: "1",
-        voltage: '600'
-    },
-    {
-        seconds: "2",
-        voltage: '600'
-    },
-    {
-        seconds: "3",
-        voltage: '600'
-    },
+    {}
 ];
 
 const numberFormatter = (value: number) =>

@@ -28,12 +28,12 @@ export default function ECGChart() {
     }, [chartData, setChartData])
 
     return(
-        <div className="mx-auto">
+        <div className="mx-auto pt-5">
             <Card className="space-y-2 p-5 md:p-10">
                 <Flex>
                     <div>
                         <Text className="font-semibold text-black">Pulse:</Text>
-                        <Metric className="text-red-500">--</Metric>
+                        <Metric className="text-red-500">75</Metric>
                     </div>
                     <div>
                         <Text className="font-semibold text-black">BP:</Text>
@@ -56,7 +56,6 @@ export default function ECGChart() {
                     autoMinValue={true}
                     valueFormatter={numberFormatter}
                     yAxisWidth={56}
-                    className="h-96 mt-8"
                 />
             </Card>
         </div>

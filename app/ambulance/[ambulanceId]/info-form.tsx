@@ -7,10 +7,9 @@ import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 
-const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
-const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
-const databaseId = 'hosadb'
-const containerId = 'AmbulanceData'
+const endpoint = "https://uhndescosmosdb.documents.azure.com:443/" //URI
+const primaryKey = 'w74NNXmQZ7o6FRDeoZvBLxieTszfzvIaRDAqFyf3itgSAmqQwuH8RIqMScDfkmVAShB5BLmsImHOACDbUlFolg=='
+const databaseId = 'testdb'
 
 const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
 
@@ -26,15 +25,41 @@ interface ambulanceItem {
     connected: boolean
 }
 
+interface patientItem {
+    id: string
+    age: string
+    status: string
+    unit: string
+    deviceId: string
+    ecgStart: string
+    ecgEnd: string
+    ambulanceId: string
+    hospitalId: string
+    active: boolean
+}
+
+interface props {
+    patientId: string
+    ambulanceId: string
+}
+
 const all_hospitals = ['Hospital 1', 'Hospital 2', 'Hospital 3']
 const all_status = ['en route', 'with patient', 'returning']
 const all_units = ['emergency', 'neuro', 'cardiac', 'trauma', 'burn', 'MUCC', 'surgery']
-const all_devices = ['']
 
-async function updateItem(client: CosmosClient, item: ambulanceItem) {
-    const container = await client.database(databaseId).container(containerId)
-    const update = await container.item(item.id, item.id).replace<ambulanceItem>(item)
+
+async function newPatient(client: CosmosClient, item: patientItem) {
+    const container = await client.database(databaseId).container("PatientInfo")
+    const response = await container.items.create(item)
+    console.log(response)
+}
+async function updatePatientItem(client: CosmosClient, item: patientItem) {
+    const container = await client.database(databaseId).container("PatientInfo")
+    const update = await container.item(item.id, item.id).replace<patientItem>(item)
     console.log('item updated', update)
+}
+async function updateAmbulanceItem(client: CosmosClient, item: ambulanceItem) {
+
 }
 
 async function updateLocation(client: CosmosClient, id: string, lat: number, long: number) {
@@ -42,20 +67,20 @@ async function updateLocation(client: CosmosClient, id: string, lat: number, lon
         {op: 'set', path: '/lat', value: lat},
         {op: 'set', path: '/long', value: long}
     ]
-    const container = await client.database(databaseId).container(containerId)
+    const container = await client.database(databaseId).container("AmbulanceData")
     // @ts-ignore
     const patch = await container.item(id, id).patch(operations)
     console.log('patch location: ', patch)
 }
 
-export default function InfoForm(ambulanceId: any) {
-    const id = String(ambulanceId.ambulanceId)
+export default function InfoForm(prop: props) {
+    const id = prop.patientId
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
 
     const [hospital, setHospital] = useState(all_hospitals[0])
     const [status, setStatus] = useState(all_status[0])
     const [unit, setUnit] = useState(all_units[0])
-    const [patientId, setPatientId] = useState('null')
+    const [patientId, setPatientId] = useState(id)
     const [patientAge, setPatientAge] = useState('null')
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
@@ -64,20 +89,24 @@ export default function InfoForm(ambulanceId: any) {
 
     const position = useMemo(()  => ({lat: lat, lng: long}), [lat, long])
 
-    const item: ambulanceItem = {
+    const item: patientItem = {
         id: id,
-        hospital: hospital,
+        age: patientAge,
         status: status,
-        patientId: patientId,
-        patientAge: patientAge,
         unit: unit,
-        lat: lat,
-        long: long,
-        connected: true
+        deviceId: 'ecgreader',
+        ecgStart: 'string', //todo: add initialization time
+        ecgEnd: 'null',
+        ambulanceId: prop.ambulanceId,
+        hospitalId: hospital,
+        active: true
     }
 
     useEffect(() => {
-        updateItem(client, item).catch(r => console.error(r))
+        newPatient(client, item).catch(r => console.error(r))
+    })
+
+    useEffect(() => {
         const interval = setInterval(() => {
             if('geolocation' in navigator) {
                 // Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
@@ -101,7 +130,7 @@ export default function InfoForm(ambulanceId: any) {
 
     const onClick = () => {
         console.log(item)
-        updateItem(client, item).catch(r => console.error(r))
+        updatePatientItem(client, item).catch(r => console.error(r))
     }
 
     return(
