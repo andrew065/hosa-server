@@ -5,9 +5,9 @@ import {MapIcon, UserIcon} from "@heroicons/react/24/solid";
 import {useRouter} from "next/navigation";
 import CardGrid from "@/app/card_grid";
 
-const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
-const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
-const databaseId = 'hosadb'
+const endpoint = "https://uhndescosmosdb.documents.azure.com:443/" //URI
+const primaryKey = 'w74NNXmQZ7o6FRDeoZvBLxieTszfzvIaRDAqFyf3itgSAmqQwuH8RIqMScDfkmVAShB5BLmsImHOACDbUlFolg=='
+const databaseId = 'testdb'
 const containerId = 'PatientInfo'
 
 interface patientItem {
@@ -43,11 +43,13 @@ export default function PatientList(props: props) {
 
     useEffect(() => {
         const interval = setInterval( async () => {
-            const activeItems = await getItems(client, "SELECT * from c where c.active = 1")
-            const pastItems = await getItems(client, "SELECT * from c where c.active = 0")
+            const activeItems = await getItems(client, "SELECT * from c where c.active = true")
+            const pastItems = await getItems(client, "SELECT * from c where c.active = false")
             setActiveItems(activeItems)
             setPastItems(pastItems)
             setShowLoading(false)
+            console.log(activeItems)
+            console.log(pastItems)
         }, 5000);
         return () => clearInterval(interval);
     }, [client, setActiveItems, setPastItems])

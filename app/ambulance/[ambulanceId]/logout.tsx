@@ -7,10 +7,14 @@ import Image from 'next/image'
 import classNames from "classnames";
 import {CosmosClient} from "@azure/cosmos";
 
-const endpoint = 'https://hosacosmosdb.documents.azure.com:443/' //URI
-const primaryKey = 'GuPc608dwFFwQaL44TSnHtiWEQWdovRjgYcEplMuCqM1pil0ZYGokw9ZyOe6uGyY7bY99d6tfc96ACDb8vTXRw=='
-const databaseId = 'hosadb'
+const endpoint = "https://uhndescosmosdb.documents.azure.com:443/" //URI
+const primaryKey = 'w74NNXmQZ7o6FRDeoZvBLxieTszfzvIaRDAqFyf3itgSAmqQwuH8RIqMScDfkmVAShB5BLmsImHOACDbUlFolg=='
+const databaseId = 'testdb'
 const containerId = 'AmbulanceData'
+
+interface props {
+    ambulanceId: string
+}
 
 async function signOut(id: string, router: any) {
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
@@ -21,8 +25,8 @@ async function signOut(id: string, router: any) {
     router.push('/')
 }
 
-export default function Logout(ambulanceId: any) {
-    const id = String(ambulanceId.ambulanceId)
+export default function Logout(prop: props) {
+    const id = prop.ambulanceId
     const router = useRouter()
 
     return(

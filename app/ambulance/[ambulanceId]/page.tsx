@@ -2,7 +2,7 @@
 
 import InfoForm from "@/app/ambulance/[ambulanceId]/info-form"
 import Logout from "@/app/ambulance/[ambulanceId]/logout";
-import {Button, Card, Text, TextInput, Title} from "@tremor/react";
+import {Button, Card, Metric, Text, TextInput, Title} from "@tremor/react";
 import {Suspense, useState} from "react"
 import ECGChart from "@/app/vitals_chart";
 
@@ -45,7 +45,6 @@ export default function AmbulanceClient({params}: any) {
                             <Suspense fallback={<Text className="text-center">Form loading...</Text>}>
                                 <InfoForm patientId={patientId} ambulanceId={ambulanceId}/>
                             </Suspense>
-                            <ECGChart /> {/* todo: add start/stop monitoring */}
                         </div>
                 }
             </div>

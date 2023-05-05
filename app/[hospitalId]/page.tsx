@@ -20,9 +20,9 @@ async function getItems(client: CosmosClient) {
 
 export default function HospitalPage({ params }: any) {
     const hospital = params.hospitalId
-    const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
-    const [items, setItems] = useState<any[]>([])
-    const [showLoading, setShowLoading] = useState(true)
+    // const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
+    // const [items, setItems] = useState<any[]>([])
+    // const [showLoading, setShowLoading] = useState(true)
 
     const router = useRouter()
 
@@ -50,7 +50,7 @@ export default function HospitalPage({ params }: any) {
             {/*                const {id, status, unit, connected} = item || {}*/}
             {/*                return(*/}
             {/*                    <Card className={connected? 'bg-white': 'bg-grey'} key={id} onClick={()=>{ //todo: variable onClick function*/}
-            {/*                        router.push(`/${hospital}/ambulance/${id}`)*/}
+            {/*                        router.push(`/${hospital}/patients/${id}`)*/}
             {/*                    }}>*/}
             {/*                        <Title>{`${id}`}</Title>*/}
             {/*                        <Text>{`Status: ${status}`}</Text>*/}

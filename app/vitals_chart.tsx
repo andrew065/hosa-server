@@ -3,12 +3,17 @@
 import { useEffect, useState } from "react";
 import {Card, Flex, Metric, Title, Text, AreaChart} from "@tremor/react";
 
+interface props {
+    ecgStart: string,
+    ecgEnd: string
+}
+
 const numberFormatter = (value: number) =>
     `${Intl.NumberFormat("us").format(value).toString()}`;
 
 const data = [{seconds: 0, voltage: 0}]
 
-export default function ECGChart() {
+export default function ECGChart(prop: props) {
     const [count, setCount] = useState(0)
     const [chartData, setChartData] = useState(data)
 
@@ -29,35 +34,33 @@ export default function ECGChart() {
 
     return(
         <div className="mx-auto pt-5">
-            <Card className="space-y-2 p-5 md:p-10">
-                <Flex>
-                    <div>
-                        <Text className="font-semibold text-black">Pulse:</Text>
-                        <Metric className="text-red-500">75</Metric>
-                    </div>
-                    <div>
-                        <Text className="font-semibold text-black">BP:</Text>
-                        <Metric className="text-yellow-500">--</Metric>
-                    </div>
-                    <div>
-                        <Text className="font-semibold text-black">SpO2:</Text>
-                        <Metric className="text-blue-600">--</Metric>
-                    </div>
-                </Flex>
-                <Title className="">Live ECG Chart</Title>
-                <AreaChart
-                    data={chartData}
-                    index="seconds"
-                    categories={["voltage"]}
-                    colors={["red"]}
-                    showAnimation={false}
-                    showLegend={false}
-                    showTooltip={false}
-                    autoMinValue={true}
-                    valueFormatter={numberFormatter}
-                    yAxisWidth={56}
-                />
-            </Card>
+            <Flex>
+                <div>
+                    <Text className="font-semibold text-black">Pulse:</Text>
+                    <Metric className="text-red-500">75</Metric>
+                </div>
+                <div>
+                    <Text className="font-semibold text-black">BP:</Text>
+                    <Metric className="text-yellow-500">--</Metric>
+                </div>
+                <div>
+                    <Text className="font-semibold text-black">SpO2:</Text>
+                    <Metric className="text-blue-600">--</Metric>
+                </div>
+            </Flex>
+            <Title className="py-3">Live ECG Chart:</Title>
+            <AreaChart
+                data={chartData}
+                index="seconds"
+                categories={["voltage"]}
+                colors={["red"]}
+                showAnimation={false}
+                showLegend={false}
+                showTooltip={true}
+                autoMinValue={true}
+                valueFormatter={numberFormatter}
+                yAxisWidth={30}
+            />
         </div>
     )
 }

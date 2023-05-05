@@ -1,11 +1,12 @@
 'use client'
 
-import { Button, Card, TextInput, Text, Title, Tab, TabList } from "@tremor/react";
+import {Button, Card, TextInput, Text, Title, Tab, TabList, Flex} from "@tremor/react";
 import { CosmosClient } from "@azure/cosmos";
 import { useEffect, useState, useMemo } from "react";
 import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
+import ECGChart from "@/app/vitals_chart";
 
 const endpoint = "https://uhndescosmosdb.documents.azure.com:443/" //URI
 const primaryKey = 'w74NNXmQZ7o6FRDeoZvBLxieTszfzvIaRDAqFyf3itgSAmqQwuH8RIqMScDfkmVAShB5BLmsImHOACDbUlFolg=='
@@ -16,10 +17,7 @@ const mapsAPIKey = "AIzaSyDSfYcESw60ZYNkHFOx5X9jrCmL4oWiDFw"
 interface ambulanceItem {
     id: string
     hospital: string
-    status: string
     patientId: string
-    patientAge: string
-    unit: string
     lat: number
     long: number
     connected: boolean
@@ -59,7 +57,10 @@ async function updatePatientItem(client: CosmosClient, item: patientItem) {
     console.log('item updated', update)
 }
 async function updateAmbulanceItem(client: CosmosClient, item: ambulanceItem) {
-
+    const container = await client.database(databaseId).container("AmbulanceInfo")
+    const response = await container.items.create(item)
+    const update = await container.item(item.id, item.id).replace(item)
+    console.log(update)
 }
 
 async function updateLocation(client: CosmosClient, id: string, lat: number, long: number) {
@@ -84,13 +85,15 @@ export default function InfoForm(prop: props) {
     const [patientAge, setPatientAge] = useState('null')
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
+    const [monitoring, setMonitoring] = useState(false)
 
     const [showCard, setShowCard] = useState(true)
+
 
     const position = useMemo(()  => ({lat: lat, lng: long}), [lat, long])
 
     const item: patientItem = {
-        id: id,
+        id: patientId,
         age: patientAge,
         status: status,
         unit: unit,
@@ -102,14 +105,24 @@ export default function InfoForm(prop: props) {
         active: true
     }
 
+    const ambulance: ambulanceItem = {
+        id: prop.ambulanceId,
+        hospital: hospital,
+        patientId: patientId,
+        lat: lat,
+        long: long,
+        connected: true
+    }
+
     useEffect(() => {
         newPatient(client, item).catch(r => console.error(r))
+        updateAmbulanceItem(client, ambulance).catch(r => console.error(r))
     })
 
     useEffect(() => {
         const interval = setInterval(() => {
             if('geolocation' in navigator) {
-                // Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
+                //Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
                 navigator.geolocation.getCurrentPosition(({ coords }) => {
                     const { latitude, longitude } = coords;
                     setLat(latitude)
@@ -131,6 +144,13 @@ export default function InfoForm(prop: props) {
     const onClick = () => {
         console.log(item)
         updatePatientItem(client, item).catch(r => console.error(r))
+    }
+
+    const onMonitoring = () => {
+        if (monitoring) {
+            item.ecgEnd = 'current date'
+        }
+        setMonitoring(!monitoring)
     }
 
     return(
@@ -205,6 +225,17 @@ export default function InfoForm(prop: props) {
                         </GoogleMap>
                     </div>
                 )}
+            </Card>
+            <Card className="space-y-2 pt-10 p-5 md:p-10">
+                <Flex>
+                    <Title className="">Patient Vitals</Title>
+                    <Button
+                        size="md" variant="secondary" onClick={onMonitoring}>
+                        {monitoring? "Stop Monitoring": "Start Monitoring"}
+                    </Button>
+                </Flex>
+
+                <ECGChart /> {/* todo: add start/stop monitoring */}
             </Card>
         </div>
     )
