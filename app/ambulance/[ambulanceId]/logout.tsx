@@ -19,7 +19,7 @@ interface props {
 async function signOut(id: string, router: any) {
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
     const container = await client.database(databaseId).container(containerId)
-    const patch = await container.item(id, id).patch([{op: 'set', path: '/connected', value: false}])
+    const patch = await container.item(id, id).patch([{op: 'set', path: '/connected', value: false}, {op: 'set', path: '/patientId', value: 'null'}])
     console.log(patch)
     client.dispose()
     router.push('/')
@@ -59,7 +59,7 @@ export default function Logout(prop: props) {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                 >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <Menu.Items className="z=50 absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <Menu.Item>
                                             {({ active }) => (
                                                 <button

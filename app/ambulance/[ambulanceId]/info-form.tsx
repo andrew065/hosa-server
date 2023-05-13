@@ -29,8 +29,8 @@ interface patientItem {
     status: string
     unit: string
     deviceId: string
-    ecgStart: string
-    ecgEnd: string
+    ecgStart: number
+    ecgEnd: number
     ambulanceId: string
     hospitalId: string
     active: boolean
@@ -41,8 +41,8 @@ interface props {
     ambulanceId: string
 }
 
-const all_hospitals = ['Hospital 1', 'Hospital 2', 'Hospital 3']
-const all_status = ['en route', 'with patient', 'returning']
+const all_hospitals = ['Mackenzie Health', 'Toronto General', 'Scarborough General']
+const all_status = ['deployed', 'with patient', 'arrived']
 const all_units = ['emergency', 'neuro', 'cardiac', 'trauma', 'burn', 'MUCC', 'surgery']
 
 
@@ -57,7 +57,7 @@ async function updatePatientItem(client: CosmosClient, item: patientItem) {
     console.log('item updated', update)
 }
 async function updateAmbulanceItem(client: CosmosClient, item: ambulanceItem) {
-    const container = await client.database(databaseId).container("AmbulanceInfo")
+    const container = await client.database(databaseId).container("AmbulanceData")
     const response = await container.items.create(item)
     const update = await container.item(item.id, item.id).replace(item)
     console.log(update)
@@ -86,8 +86,12 @@ export default function InfoForm(prop: props) {
     const [lat, setLat] = useState(0)
     const [long, setLong] = useState(0)
     const [monitoring, setMonitoring] = useState(false)
+    const [monitoringDisabled, setMonitoringDisabled] = useState(false)
+    const [ecgStart, setEcgStart] = useState(0)
+    const [ecgEnd, setEcgEnd] = useState(0)
 
     const [showCard, setShowCard] = useState(true)
+    const [initialUpload, setInitialUpload] = useState(true)
 
 
     const position = useMemo(()  => ({lat: lat, lng: long}), [lat, long])
@@ -98,8 +102,8 @@ export default function InfoForm(prop: props) {
         status: status,
         unit: unit,
         deviceId: 'ecgreader',
-        ecgStart: 'string', //todo: add initialization time
-        ecgEnd: 'null',
+        ecgStart: ecgStart,
+        ecgEnd: ecgEnd,
         ambulanceId: prop.ambulanceId,
         hospitalId: hospital,
         active: true
@@ -115,8 +119,11 @@ export default function InfoForm(prop: props) {
     }
 
     useEffect(() => {
-        newPatient(client, item).catch(r => console.error(r))
-        updateAmbulanceItem(client, ambulance).catch(r => console.error(r))
+        if (initialUpload) {
+            newPatient(client, item).catch(r => console.error(r))
+            updateAmbulanceItem(client, ambulance).catch(r => console.error(r))
+            setInitialUpload(false)
+        }
     })
 
     useEffect(() => {
@@ -142,13 +149,20 @@ export default function InfoForm(prop: props) {
     });
 
     const onClick = () => {
-        console.log(item)
         updatePatientItem(client, item).catch(r => console.error(r))
+        console.log(ecgStart)
     }
 
     const onMonitoring = () => {
         if (monitoring) {
-            item.ecgEnd = 'current date'
+            setEcgEnd(Math.floor(Date.now() / 1000))
+            setMonitoringDisabled(true)
+        }
+        else {
+            const time = Math.floor(Date.now() / 1000)
+            setEcgStart(time)
+            console.log(ecgStart)
+            console.log(time)
         }
         setMonitoring(!monitoring)
     }
@@ -226,17 +240,19 @@ export default function InfoForm(prop: props) {
                     </div>
                 )}
             </Card>
-            <Card className="space-y-2 pt-10 p-5 md:p-10">
-                <Flex>
-                    <Title className="">Patient Vitals</Title>
-                    <Button
-                        size="md" variant="secondary" onClick={onMonitoring}>
-                        {monitoring? "Stop Monitoring": "Start Monitoring"}
-                    </Button>
-                </Flex>
+            <div className="pt-5 z-10">
+                <Card className="space-y-2 p-5 md:p-10">
+                    <Flex>
+                        <Title className="">Patient Vitals</Title>
+                        <Button
+                            size="md" variant="secondary" disabled={monitoringDisabled} onClick={onMonitoring}>
+                            {monitoring? "Stop Monitoring": "Start Monitoring"}
+                        </Button>
+                    </Flex>
+                    {monitoring? <ECGChart client={client} ecgStart={ecgStart} ecgEnd={ecgEnd}/>: <div></div>}
 
-                <ECGChart /> {/* todo: add start/stop monitoring */}
-            </Card>
+                </Card>
+            </div>
         </div>
     )
 }

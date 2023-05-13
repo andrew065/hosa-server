@@ -1,7 +1,7 @@
 const hospital = {
-    Hospital1: "12345",
-    Hospital2: "13245",
-    Hospital3: "53421"
+    MackenzieHealth: "12345",
+    TorontoGeneral: "13245",
+    ScarboroughGeneral: "53421"
 }
 
 const ambulance = {

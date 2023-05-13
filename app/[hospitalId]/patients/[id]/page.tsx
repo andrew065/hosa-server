@@ -23,8 +23,8 @@ interface patientItem {
     status: string
     unit: string
     deviceId: string
-    ecgStart: string
-    ecgEnd: string
+    ecgStart: number
+    ecgEnd: number
     ambulanceId: string
     hospitalId: string
     active: boolean
@@ -42,7 +42,6 @@ async function getItem(client: CosmosClient, itemId: string) {
 
 export default function HospitalPage({params}: any) {
     const patientId = params.id
-
     const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
     const [item, setItem] = useState<patientItem>({
         id: '',
@@ -50,8 +49,8 @@ export default function HospitalPage({params}: any) {
         status: '',
         unit: '',
         deviceId: '',
-        ecgStart: '', //todo: add initialization time
-        ecgEnd: '',
+        ecgStart: 0,
+        ecgEnd: 0,
         ambulanceId: '',
         hospitalId: '',
         active: true
@@ -67,11 +66,6 @@ export default function HospitalPage({params}: any) {
         }, 1000);
         return () => clearInterval(interval);
     }, [client, setItem])
-
-    // const position = useMemo(()  => ({lat: item.lat, lng: item.long}), [item])
-    // const {isLoaded} = useLoadScript({
-    //     googleMapsApiKey: mapsAPIKey
-    // });
 
     return (
         <main>
@@ -99,30 +93,7 @@ export default function HospitalPage({params}: any) {
                         </Card>
                     </div>
                     <Card className="md:space-y-2 md:pt-2 pl-3 px-3 md:px-10 md:pl-10">
-                        <>
-                            <TabList
-                                defaultValue="1"
-                                onValueChange={(value) => setShowCard(value === "1")}
-                                className="mt-6"
-                            >
-                                <Tab value="1" text="Patient ECG Graph" icon={UserIcon} />
-                                <Tab value="2" text="Ambulance Map" icon={MapIcon} />
-                            </TabList>
-                        </>
-                        {showCard ?
-                            <ECGChart /> : (
-                            // <div className="pt-3">
-                            //     {/*<GoogleMap*/}
-                            //     {/*    zoom={15}*/}
-                            //     {/*    center={position}*/}
-                            //     {/*    mapContainerClassName={"map-container"}*/}
-                            //     {/*>*/}
-                            //     {/*    <Marker position={position}></Marker>*/}
-                            //     {/*</GoogleMap>*/}
-                            //
-                            // </div>
-                            <div id="map" className="map"></div>
-                        )}
+                        <ECGChart client={client} ecgStart={item.ecgStart} ecgEnd={item.ecgEnd}/>
                     </Card>
                 </div>}
         </main>
