@@ -43,8 +43,8 @@ export default function PatientList(props: props) {
 
     useEffect(() => {
         const interval = setInterval( async () => {
-            const activeItems = await getItems(client, "SELECT * from c where c.active = true")
-            const pastItems = await getItems(client, "SELECT * from c where c.active = false")
+            const activeItems = await getItems(client, "SELECT * from c where c.active = true ORDER BY c.critical DESC")
+            const pastItems = await getItems(client, "SELECT * from c where c.active = false ORDER BY c.critical")
             setActiveItems(activeItems)
             setPastItems(pastItems)
             setShowLoading(false)

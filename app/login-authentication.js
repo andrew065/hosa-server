@@ -1,13 +1,13 @@
 const hospital = {
     MackenzieHealth: "12345",
-    TorontoGeneral: "13245",
-    ScarboroughGeneral: "53421"
+    TorontoGeneral: "12345",
+    ScarboroughGeneral: "12345"
 }
 
 const ambulance = {
-    Ambulance1: "abcdef",
-    Ambulance2: "qwerty",
-    Ambulance3: "asdfg"
+    Ambulance1: "12345",
+    Ambulance2: "12345",
+    Ambulance3: "12345"
 }
 
 const verify = function (user, pass) {

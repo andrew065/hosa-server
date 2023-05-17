@@ -7,6 +7,7 @@ import { UserIcon, MapIcon } from "@heroicons/react/24/solid"
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api"
 import CreateListBox from "@/app/ambulance/[ambulanceId]/list_box_item"
 import ECGChart from "@/app/vitals_chart";
+import {Switch} from "@headlessui/react";
 
 const endpoint = "https://uhndescosmosdb.documents.azure.com:443/" //URI
 const primaryKey = 'w74NNXmQZ7o6FRDeoZvBLxieTszfzvIaRDAqFyf3itgSAmqQwuH8RIqMScDfkmVAShB5BLmsImHOACDbUlFolg=='
@@ -27,6 +28,7 @@ interface patientItem {
     id: string
     age: string
     status: string
+    critical: boolean
     unit: string
     deviceId: string
     ecgStart: number
@@ -39,6 +41,7 @@ interface patientItem {
 interface props {
     patientId: string
     ambulanceId: string
+
 }
 
 const all_hospitals = ['Mackenzie Health', 'Toronto General', 'Scarborough General']
@@ -89,6 +92,7 @@ export default function InfoForm(prop: props) {
     const [monitoringDisabled, setMonitoringDisabled] = useState(false)
     const [ecgStart, setEcgStart] = useState(0)
     const [ecgEnd, setEcgEnd] = useState(0)
+    const [critical, setCritical] = useState(false)
 
     const [showCard, setShowCard] = useState(true)
     const [initialUpload, setInitialUpload] = useState(true)
@@ -100,6 +104,7 @@ export default function InfoForm(prop: props) {
         id: patientId,
         age: patientAge,
         status: status,
+        critical: critical,
         unit: unit,
         deviceId: 'ecgreader',
         ecgStart: ecgStart,
@@ -171,7 +176,28 @@ export default function InfoForm(prop: props) {
     return(
         <div>
             <Card className="space-y-2 p-5 md:p-10">
-                <Title className="pb-2">Ambulance Control Panel</Title>
+                <Flex>
+                    <Title className="pb-2">Ambulance Control Panel</Title>
+                    <div className="pb-5">
+                        <Flex>
+                            <Text className="pr-2">Critical Patient:  </Text>
+                            <Switch
+                                checked={critical}
+                                onChange={setCritical}
+                                className={`${critical ? 'bg-blue-600' : 'bg-gray-200'}
+          relative inline-flex h-[20px] w-[40px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                            >
+                                <span className="sr-only">Use setting</span>
+                                <span
+                                    aria-hidden="true"
+                                    className={`${critical ? 'translate-x-5' : 'translate-x-0'}
+            pointer-events-none inline-block h-[15px] w-[15px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                                />
+                            </Switch>
+                        </Flex>
+
+                    </div>
+                </Flex>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 pb-3">
                     <div>
                         <Text>Patient Id:</Text>
