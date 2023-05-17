@@ -123,6 +123,7 @@ export default function InfoForm(prop: props) {
             newPatient(client, item).catch(r => console.error(r))
             updateAmbulanceItem(client, ambulance).catch(r => console.error(r))
             setInitialUpload(false)
+            console.log("new patient added")
         }
     })
 
@@ -134,7 +135,7 @@ export default function InfoForm(prop: props) {
                     const { latitude, longitude } = coords;
                     setLat(latitude)
                     setLong(longitude)
-                    updateLocation(client, item.id, latitude, longitude).catch(r => console.error(r))
+                    updateLocation(client, ambulance.id, latitude, longitude).catch(r => console.error(r))
                 })
             }
         }, 1000)
