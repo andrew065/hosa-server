@@ -390,7 +390,7 @@ export default function ECGChart(prop: props) {
                 setChartData(history)
                 console.log(prop.ecgStart, prop.ecgEnd)
             }
-        }, 500)
+        }, 100)
         return () => {
             clearInterval(interval)
         }

@@ -136,6 +136,7 @@ export default function InfoForm(prop: props) {
         const interval = setInterval( async () => {
             const update = await updatePatientItem(client, item)
             console.log(update)
+            if (item.ecgEnd != 0) setMonitoring(false)
         }, 1000);
         return () => {
             clearInterval(interval)
