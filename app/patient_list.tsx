@@ -48,8 +48,7 @@ export default function PatientList(props: props) {
             setActiveItems(activeItems)
             setPastItems(pastItems)
             setShowLoading(false)
-            console.log(activeItems)
-            console.log(pastItems)
+
         }, 5000);
         return () => clearInterval(interval);
     }, [client, setActiveItems, setPastItems])

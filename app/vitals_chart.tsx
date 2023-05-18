@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import {Card, Flex, Metric, Title, Text, AreaChart} from "@tremor/react";
 import {CosmosClient} from "@azure/cosmos";
 
+const endpoint = "https://uhndescosmosdb.documents.azure.com:443/" //URI
+const primaryKey = 'w74NNXmQZ7o6FRDeoZvBLxieTszfzvIaRDAqFyf3itgSAmqQwuH8RIqMScDfkmVAShB5BLmsImHOACDbUlFolg=='
+
 interface props {
     client: CosmosClient,
     ecgStart: number,
@@ -328,10 +331,14 @@ const data: dataPoint[] = Array(150).fill({seconds: null, voltage: null})
 
 async function getData(client: CosmosClient, ecgStart: number) {
     const containerItems = await client.database("testdb").container("EcgData").items
-    const response = await containerItems.query(`SELECT * from c where c._ts >= ${ecgStart} ORDER BY c._ts ASC`).fetchAll()
+    console.log(`SELECT * from c where c._ts >= ${ecgStart} ORDER BY c._ts ASC`)
+    const query = `SELECT * from c where c._ts >= ${ecgStart} ORDER BY c._ts ASC`
+    const response = await containerItems.query(query).fetchAll()
     const items = response["resources"]
+    console.log(items)
     // @ts-ignore
     const data: string[] = items.map(item => item["Body"]["ecgValue"])
+    console.log(data)
 
     let array: dataPoint[] = []
     let count = 0
@@ -348,6 +355,8 @@ async function getData(client: CosmosClient, ecgStart: number) {
 }
 
 export default function ECGChart(prop: props) {
+    const client = new CosmosClient({endpoint: endpoint, key: primaryKey});
+
     const [count, setCount] = useState(0)
     const [chartData, setChartData] = useState(data)
     const [pulse, setPulse] = useState("--")
@@ -356,29 +365,32 @@ export default function ECGChart(prop: props) {
 
     useEffect(() => {
         const interval = setInterval( async() => {
-            if (prop.ecgStart != 0) {
-                const items = await getData(prop.client, prop.ecgStart).catch(e => console.error(e))
+            if (prop.ecgStart != 0 && prop.ecgEnd == 0) {
+                //actual code
+                // const items = await getData(prop.client, prop.ecgStart).catch(e => console.error(e))
+                //
+                // const history = chartData
+                //
+                // if (items != null) {
+                //     history.concat(items)
+                //     if (history.length > 150) {
+                //         setChartData(history.slice(history.length - 150, history.length))
+                //         console.log(chartData)
+                //     }
+                // }
 
                 const history = chartData
+                history.push(datapoints[num])
+                history.shift()
+                num = num + 1
 
-                if (items != null) {
-                    history.concat(items)
-                    setChartData(history.slice(history.length - 150, history.length))
-                    console.log(chartData)
-                }
+                if (num == 150) num = 0;
+
+                console.log(num, datapoints[num])
+                setChartData(history)
+                console.log(prop.ecgStart, prop.ecgEnd)
             }
-
-            //code for fake data
-            // history.push(datapoints[num])
-            // history.shift()
-            // num = num + 1
-            //
-            // console.log(num, datapoints[num])
-            // setChartData(history)
-
-            // setChartData(history.concat(item))
-            // console.log(prop.ecgStart, prop.ecgEnd)
-        }, 100)
+        }, 500)
         return () => {
             clearInterval(interval)
         }

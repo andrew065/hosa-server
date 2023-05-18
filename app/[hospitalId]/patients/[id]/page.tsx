@@ -63,6 +63,7 @@ export default function HospitalPage({params}: any) {
             const item = await getItem(client, patientId)
             setShowLoading(false)
             setItem(item)
+            console.log(item)
         }, 1000);
         return () => clearInterval(interval);
     }, [client, setItem])
@@ -93,7 +94,10 @@ export default function HospitalPage({params}: any) {
                         </Card>
                     </div>
                     <Card className="md:space-y-2 md:pt-2 pl-3 px-3 md:px-10 md:pl-10">
-                        <ECGChart client={client} ecgStart={item.ecgStart} ecgEnd={item.ecgEnd}/>
+                        {item.ecgStart == 0?
+                            <Text className="text-center pt-5">No ECG data being transmitted</Text> :
+                            <ECGChart client={client} ecgStart={item.ecgStart} ecgEnd={item.ecgEnd}/>
+                        }
                     </Card>
                 </div>}
         </main>

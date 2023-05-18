@@ -133,22 +133,33 @@ export default function InfoForm(prop: props) {
     })
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if('geolocation' in navigator) {
-                //Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
-                navigator.geolocation.getCurrentPosition(({ coords }) => {
-                    const { latitude, longitude } = coords;
-                    setLat(latitude)
-                    setLong(longitude)
-                    updateLocation(client, ambulance.id, latitude, longitude).catch(r => console.error(r))
-                })
-            }
-        }, 1000)
+        const interval = setInterval( async () => {
+            const update = await updatePatientItem(client, item)
+            console.log(update)
+        }, 1000);
         return () => {
             clearInterval(interval)
             client.dispose()
         }
-    }, [client])
+    }, [client, item])
+
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         if('geolocation' in navigator) {
+    //             //Retrieve latitude & longitude coordinates from `navigator.geolocation` Web API
+    //             navigator.geolocation.getCurrentPosition(({ coords }) => {
+    //                 const { latitude, longitude } = coords;
+    //                 setLat(latitude)
+    //                 setLong(longitude)
+    //                 updateLocation(client, ambulance.id, latitude, longitude).catch(r => console.error(r))
+    //             })
+    //         }
+    //     }, 1000)
+    //     return () => {
+    //         clearInterval(interval)
+    //         client.dispose()
+    //     }
+    // }, [client])
 
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: mapsAPIKey
@@ -277,7 +288,6 @@ export default function InfoForm(prop: props) {
                         </Button>
                     </Flex>
                     {monitoring? <ECGChart client={client} ecgStart={ecgStart} ecgEnd={ecgEnd}/>: <div></div>}
-
                 </Card>
             </div>
         </div>
