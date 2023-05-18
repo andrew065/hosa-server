@@ -356,18 +356,25 @@ export default function ECGChart(prop: props) {
 
     useEffect(() => {
         const interval = setInterval( async() => {
-            // let item
-            // if (prop.ecgStart != 0) {
-            //     item = await getData(prop.client, prop.ecgStart).catch(e => console.error(e))
-            // }
-            // setChartData(item)
-            const history = chartData
-            history.push(datapoints[num])
-            history.shift()
+            if (prop.ecgStart != 0) {
+                const items = await getData(prop.client, prop.ecgStart).catch(e => console.error(e))
 
-            num = num + 1
-            console.log(num, datapoints[num])
-            setChartData(history)
+                const history = chartData
+
+                if (items != null) {
+                    history.concat(items)
+                    setChartData(history.slice(history.length - 150, history.length))
+                    console.log(chartData)
+                }
+            }
+
+            //code for fake data
+            // history.push(datapoints[num])
+            // history.shift()
+            // num = num + 1
+            //
+            // console.log(num, datapoints[num])
+            // setChartData(history)
 
             // setChartData(history.concat(item))
             // console.log(prop.ecgStart, prop.ecgEnd)
