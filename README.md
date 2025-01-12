@@ -1,19 +1,5 @@
-## HOSA-Server
+###GUAVA
 
+#HOSA Medical Innovation Project
 
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Microsoft Azure based cloud server that securely allows for ECG data transmission from a physical wireless ECG built using an Arduino microcontroller. The website is a platform that displays vitals information (i.e. ECG reading, BP, O2 saturation) to enable more efficient transmission of information between paramedics and hospital emergency departments and reduce the time wasted summarizing/printing out vitals information once patients arrive at the ER.
